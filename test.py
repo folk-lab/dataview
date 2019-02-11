@@ -1,24 +1,16 @@
 #!/usr/bin/python3
 import os
+from smb.SMBConnection import SMBConnection
 
-rootDir = '/home/msamani/Academia/Basel/ViewMeasurements'
-string = ""
-
-def PrintSubDir(curDir, string):
-	string += "<li>{0:s}".format(os.path.basename(curDir))
-	string += "<ul>"
-	for subDir in os.listdir(curDir):
-		if os.path.isdir(os.path.join(curDir, subDir)) and not subDir.startswith('.'):
-
-			hasSubs = True
-			string = PrintSubDir(os.path.join(curDir, subDir), string)
+conn = SMBConnection(
+	'galeky83', '####',			# Username, password
+	'qdot-phys-36.physik.unibas.ch',	# Client machine
+	'phys-jumbo.physik.unibas.ch',		# Server machine
+	use_ntlm_v2 = True)
 	
-	string += "</ul>"
-	string += "</li>"
-	return string
-
-string += "<ul>"
-string = PrintSubDir(rootDir, string)
-string += "</ul>"
-
-print(string)
+conn.connect('10.34.8.3')
+print("Connected, I suppose!")
+lst = conn.listPath('zum$', 'Measurement_Data')
+for item in lst:
+	print(item.isDirectory, item.isNormal, item.isReadOnly, item.filename)
+conn.close()
