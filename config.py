@@ -5,7 +5,7 @@ config = {
 	'SambaServiceName':		'zum$',
 	'SambaServerIP':		'10.34.8.3',
 	'SambaUsername':		'galeky83',
-	'SambaPassword':		'AgeipbtH_2Om',
+	'SambaPassword':		'####',
 	'SambaServiceName':		'zum$',
 	'SambaRootDirectory':	'Measurement_Data'
 }
