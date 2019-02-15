@@ -2,13 +2,17 @@
 #tree-div, #file-list-div {float: left; width: 20%; height: 95vh;}
 #graph-div {float: left; width: 60%; height: 95vh;}
 
-ul.tree-root li { list-style-type: none; position: relative; }
+ul.tree-root ul { margin: 5px; margin-left:20px; }
+ul.tree-root li.current { font-weight: bold; }
+ul.tree-root a {text-decoration: none;}
+
+/*ul.tree-root li { list-style-type: none; position: relative; }
 ul.tree-root li ul { display: none; }
 ul.tree-root li.open > ul { display: block;}
-ul.tree-root li a { color: black; text-decoration: none; }
-ul.tree-root li a:before {
+ul.tree-root li a { color: black; text-decoration: none; }*/
+/*ul.tree-root li a:before {
 	display: block; position: absolute;
 	left: -1.3em; top: .2em;}
 ul.tree-root li > a:not(:last-child):before { content: '+'; }
-ul.tree-root li.open > a:not(:last-child):before { content: '-'; }
+ul.tree-root li.open > a:not(:last-child):before { content: '-'; }*/
 

@@ -4,12 +4,12 @@ Using Python Dash, this project is a web-interface for viewing a directory sturc
 # Installation
 
 The code is written in Python3. Get pip (`sudo apt-get install python3-setuptools` in Debian/Ubuntu) to install the required packages.
-Install [https://plot.ly/products/dash/](Dash)
+Install [Dash](https://plot.ly/products/dash/)
 ```
 sudo pip3 install dash dash-core-components dash-html-components
 ```
 
-If your files are accessed via Samba, you need [https://pysmb.readthedocs.io/en/latest/](PySmb):
+If your files are accessed via Samba, you need [PySmb](https://pysmb.readthedocs.io/en/latest/):
 ```
 sudo pip3 install pysmb
 ```
