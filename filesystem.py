@@ -24,10 +24,10 @@ class FileSystem:
 				if item.isDirectory and not item.filename in ['.', '..']:
 					result.append(item.filename)
 		elif self.protocol == 'local':
-			lst = os.listdir(d)
+			lst = os.listdir(os.path.join(self.root, d))
 			for item in lst:
-				if os.path.isdir(item):
-					result.append(item)
+				if os.path.isdir(os.path.join(self.root, d, item)):
+					result.append(item + os.path.sep)
 		return result
 	
 	def ListFiles(self, d):
@@ -38,9 +38,9 @@ class FileSystem:
 				if item.isDirectory and not item.filename in ['.', '..']:
 					result.append(item.filename)
 		elif self.protocol == 'local':
-			lst = os.listdir(d)
+			lst = os.listdir(os.path.join(self.root, d))
 			for item in lst:
-				if os.path.isdir(item):
+				if os.path.isfile(os.path.join(self.root, d, item)):
 					result.append(item)
 		return result
 

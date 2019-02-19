@@ -2,17 +2,22 @@
 #tree-div, #file-list-div {float: left; width: 20%; height: 95vh;}
 #graph-div {float: left; width: 60%; height: 95vh;}
 
+/* The directories' tree styles */
 ul.tree-root ul { margin: 5px; margin-left:20px; }
-ul.tree-root li.current { font-weight: bold; }
+ul.tree-root li {font-size: 12px;}
+ul.tree-root li.selected > a {color: black; font-size: Large; font-weight: bold;}
 ul.tree-root a {text-decoration: none;}
 
-/*ul.tree-root li { list-style-type: none; position: relative; }
-ul.tree-root li ul { display: none; }
-ul.tree-root li.open > ul { display: block;}
-ul.tree-root li a { color: black; text-decoration: none; }*/
-/*ul.tree-root li a:before {
-	display: block; position: absolute;
-	left: -1.3em; top: .2em;}
-ul.tree-root li > a:not(:last-child):before { content: '+'; }
-ul.tree-root li.open > a:not(:last-child):before { content: '-'; }*/
-
+ul.file-list-ul li {list-style-type: none; margin: 0px; padding: 2px;}
+ul.file-list-ul li a {
+	display: block; width: 100%; text-decoration: none;
+	background-color: #CEFFFF;
+}
+ul.file-list-ul li.selected > a {
+	font-weight: bold;
+}
+ul.file-list-ul li a:hover {
+	display: block; width: 100%;
+	list-style-type: none;
+	background-color: blue;
+}

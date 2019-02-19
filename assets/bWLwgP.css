@@ -307,9 +307,9 @@ ol, ul {
 ul ul,
 ul ol,
 ol ol,
-ol ul {
+/* MOHAMMAD commented out ol ul {
   margin: 1.5rem 0 1.5rem 3rem;
-  font-size: 90%; }
+  font-size: 90%; }*/
 li {
   margin-bottom: 1rem; }
 

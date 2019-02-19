@@ -2,5 +2,6 @@
 import os
 import filesystem
 
-fs = filesystem.FileSystem()
+path = 'Mohammad/'
+print(os.path.dirname(path))
 

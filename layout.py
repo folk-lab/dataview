@@ -8,63 +8,74 @@ import base64
 from config import config
 
 def CreateLayout(app):	
-	app.layout =  html.Div(id='page-contents', children=ServeLayout(''))
+	app.layout =  html.Div([
+		dcc.Location(id='url', refresh=False),
+		html.Div(id='page-contents', children=ServeLayout(''))])
 	
 	@app.callback(dash.dependencies.Output('page-contents', 'children'),
 		[dash.dependencies.Input('url', 'pathname')])
-	def ProcessUrl(pathname):
-		if pathname is None:
-			print("NONE")
+	def ProcessUrl(selectedPath):
+		if selectedPath is None:
 			return ServeLayout('')
 		else:
-			return ServeLayout(pathname)
+			return ServeLayout(Decode(selectedPath[1:]))
 
-def ServeLayout(curUrlString):
-	fs = filesystem.FileSystem()
-	tree = MakeDirTree('', fs=fs)
+def ServeLayout(selectedPath):
+	selectedDir = os.path.dirname(selectedPath) + os.path.sep
+	tree = MakeDirTree('', selectedDir)
 	treeObj = html.Ul(id='tree-root-ul', className='tree-root', children=tree)
-	if curUrlString == '':
-		print("Nothing detected")
-		# Return an empty page with only a list of directory names
-		return [dcc.Location(id='url', refresh=False),
-				html.Div(id='row-container',
-				children=[html.Div(id='tree-div', children=treeObj),
-				html.Div(id='file-list-div'),
-				html.Div(id='graph-div')])]
-	else:
-		print(curUrlString)
-		curItem = Decode(curUrlString[1:])
-		curDir = os.path.dirname(os.path.realpath(curItem))
-		print(curDir)
-	return None
+	
+	fs = filesystem.FileSystem()
+	print("SELECTED PATH", selectedPath)
+	filesArray = fs.ListFiles(selectedDir)
+	fileListHtml = []
+	for fn in filesArray:
+		filePath = os.path.join(selectedDir, fn)
+		if filePath == selectedPath:
+			fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath)), className='selected'))
+		else:
+			fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath))))
+	fileListHtml = html.Ul(id='file-list', className='file-list-ul', children=fileListHtml)
+	
+	return [html.Div(id='row-container',
+			children=[html.Div(id='tree-div', children=treeObj),
+			html.Div(id='file-list-div', children=[fileListHtml]),
+			html.Div(id='graph-div')])]
+
 
 # A recusive function that generates a tree structure
 # using <ul> and <li> HTML elements.
-def MakeDirTree(curDir, fs):
-	dirName = os.path.basename(curDir)
+def MakeDirTree(curDir, selectedDir):
+	selected = False
+	print(selectedDir, " == ", curDir)
+	if selectedDir == curDir:
+		selected = True
+	fs = filesystem.FileSystem()
+	dirName = os.path.basename(curDir[:-1])
 	childArr = []
 	for subDir in fs.ListSubDirs(curDir):
-		childArr.append(MakeDirTree(os.path.join(curDir, subDir)))
+		childArr.append(MakeDirTree(os.path.join(curDir, subDir), selectedDir))
+	if curDir == "":
+		dirName = os.path.basename(fs.root)
 	if len(childArr) > 0:
-		return html.Li(children=[
-			html.A(dirName, href=Encode(curDir)), html.Ul(children=childArr)
-		])
-	else:
-		return html.Li(children=[
-			html.A(dirName, href=Encode(curDir))
-		])
-'''	elif protocol == 'samba':
-		dirName = os.path.basename(curDir) if len(curDir) > 0 else "Root"
-		childArr = []
-		for subDir in smb.ListSubDirs(curDir):
-			childArr.append(MakeDirTree(os.path.join(curDir, subDir), smb=smb))
-		if len(childArr) > 0:
-			print("Return Children", dirName)
-			return html.Li(children=[dirName, html.Ul(children=childArr) ])
+		if selected:
+			return html.Li(className='selected', children=[
+				html.A(dirName, href=Encode(curDir)), html.Ul(children=childArr)
+			])		
 		else:
-			print("Return Childless", dirName)
-			return html.Li(children=[dirName])
-'''
+			return html.Li(children=[
+				html.A(dirName, href=Encode(curDir)), html.Ul(children=childArr)
+			])
+	else:
+		if selected:
+			return html.Li(className='selected', children=[
+				html.A(dirName, href=Encode(curDir))
+			])		
+		else:
+			return html.Li(children=[
+				html.A(dirName, href=Encode(curDir))
+			])
+
 # Encode the folder and file names into something that
 # can safely be included in a URL.
 def Encode(s):
