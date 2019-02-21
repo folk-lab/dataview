@@ -1,23 +1,21 @@
 #row-container:after {content: ""; display: table; clear: both;}
-#tree-div, #file-list-div {float: left; width: 20%; height: 95vh;}
+#tree-div, #file-list-div {float: left; width: 20%; height: 95vh; padding: 10px;}
 #graph-div {float: left; width: 60%; height: 95vh;}
 
-/* The directories' tree styles */
-ul.tree-root ul { margin: 5px; margin-left:20px; }
-ul.tree-root li {font-size: 12px;}
-ul.tree-root li.selected > a {color: black; font-size: Large; font-weight: bold;}
-ul.tree-root a {text-decoration: none;}
+html { font-family: "Courier New", Courier, monospace }
+ol, ul { padding: 10px; list-style:none; }
+li {padding: 10px; }
 
-ul.file-list-ul li {list-style-type: none; margin: 0px; padding: 2px;}
-ul.file-list-ul li a {
-	display: block; width: 100%; text-decoration: none;
-	background-color: #CEFFFF;
-}
-ul.file-list-ul li.selected > a {
-	font-weight: bold;
-}
-ul.file-list-ul li a:hover {
-	display: block; width: 100%;
-	list-style-type: none;
-	background-color: blue;
-}
+a {text-decoration: none; color: black; padding-left:30px;}
+a:hover { font-weight: bold; }
+
+/* The directories' tree styles */
+#tree-div { }
+ul.tree-root li, ul.tree-root li.selected > ul li {	background:url('folder.png') no-repeat 7px 5px;}
+ul.tree-root li.selected { background: url('openfolder.png') no-repeat 7px 5px; }
+ul.tree-root li.selected > a {font-size: Large; font-weight: bold;}
+
+#file-list-div { }
+ul.file-list li {background: url('plot.png') no-repeat 7px 5px;}
+ul.file-list li.selected {background: url('openplot.png') no-repeat 7px 5px;}
+ul.file-list li.selected > a {font-size: Large; font-weight: bold;}

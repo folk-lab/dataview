@@ -44,4 +44,8 @@ class FileSystem:
 					result.append(item)
 		return result
 
-			
+	def IsFile(self, path):
+		if self.protocol == 'local' and os.path.isfile(os.path.join(self.root, path)) and path.endswith('.h5'):
+			return True
+		else:
+			return False
