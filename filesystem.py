@@ -1,11 +1,14 @@
 import os
 from config import config
-from smb.SMBConnection import SMBConnection
 
 class FileSystem:
 	def __init__(self):
 		self.protocol = config['FileServerProtocol']
 		if self.protocol == 'samba':
+			try:
+				from smb.SMBConnection import SMBConnection
+			except ImportError:
+				raise ImportError('Cannot serve data from Samba share. pysmb not installed.')
 			self.root = config['SambaRootDirectory']
 			self.serviceName = config['SambaServiceName']
 			self.conn = SMBConnection(
@@ -14,8 +17,8 @@ class FileSystem:
 			self.conn.connect(config['SambaServerIP'])
 		elif self.protocol == 'local':
 			self.root = config['LocalRootDirectory']
-		
-		
+
+
 	def ListSubDirs(self, d):
 		result = []
 		if self.protocol == 'samba':
@@ -29,9 +32,10 @@ class FileSystem:
 				if os.path.isdir(os.path.join(self.root, d[:-1], item)):
 					result.append(item + os.path.sep)
 		return result
-	
+
 	def ListFiles(self, d):
 		result = []
+		allowed_types = ['.h5', '.hdf5', '.ibw', '.png', '.jpg', '.jpeg']
 		if self.protocol == 'samba':
 			lst = self.conn.listPath('zum$', '{0:s}/{1:s}'.format(self.root, d))
 			for item in lst:
@@ -40,7 +44,10 @@ class FileSystem:
 		elif self.protocol == 'local':
 			lst = os.listdir(os.path.join(self.root, d))
 			for item in lst:
-				if os.path.isfile(os.path.join(self.root, d, item)):
+				item_path = os.path.join(self.root, d, item)
+				_, item_type = os.path.splitext(item_path)
+				print(item_path, item_type)
+				if ( os.path.isfile(item_path) ) and ( item_type in allowed_types ):
 					result.append(item)
 		return result
 
@@ -49,7 +56,7 @@ class FileSystem:
 			return True
 		else:
 			return False
-			
+
 	def FullPath(self, path):
 		if self.protocol == 'local':
 			return os.path.join(self.root, path)
