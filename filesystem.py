@@ -24,13 +24,15 @@ class FileSystem:
 		if self.protocol == 'samba':
 			lst = self.conn.listPath(self.serviceName, '{0:s}/{1:s}'.format(self.root, d))
 			for item in lst:
-				if (item.isDirectory) and not (item.filename in ['.', '..']) \
-				  and not (item.filename.startswith('.')):
+				if (item.isDirectory) and not (item.filename in ['.', '..']):
 					result.append(item.filename)
 		elif self.protocol == 'local':
 			lst = os.listdir(os.path.join(self.root, d[:-1]))
 			for item in lst:
-				if os.path.isdir(os.path.join(self.root, d[:-1], item)):
+				item_path = os.path.join(self.root, d[:-1], item)
+				if os.path.isdir(item_path) \
+				  and not (os.path.basename(item_path).startswith('.')) \
+				  and not (os.path.basename(item_path).startswith('__')):
 					result.append(item + os.path.sep)
 		return result
 
@@ -47,7 +49,6 @@ class FileSystem:
 			for item in lst:
 				item_path = os.path.join(self.root, d, item)
 				_, item_type = os.path.splitext(item_path)
-				print(item_path, item_type)
 				if ( os.path.isfile(item_path) ) and ( item_type in allowed_types ):
 					result.append(item)
 		return result
