@@ -24,7 +24,7 @@ def CreateLayout(app):
 
 def ServeLayout(selectedPath):
 	# Create a folder tree
-	selectedDir = os.path.dirname(selectedPath) + os.path.sep
+	selectedDir = os.path.dirname(selectedPath)
 	tree = MakeDirTree('', selectedDir)
 	treeObj = html.Ul(id='tree-root-ul', className='tree-root', children=tree)
 
@@ -42,10 +42,10 @@ def ServeLayout(selectedPath):
 
 	# If a file is selected, plot it.
 	if fs.IsFile(selectedPath):
-		plot = Plot(selectedPath)
+		plot = Plot(fs.FullPath(selectedPath))
 	else:
 		plot = html.Div('')
-	
+
 	return [html.Div(id='row-container',
 			children=[html.Div(id='tree-div', children=treeObj),
 			html.Div(id='file-list-div', children=[fileListHtml]),
@@ -55,32 +55,39 @@ def ServeLayout(selectedPath):
 # A recusive function that generates a tree structure
 # using <ul> and <li> HTML elements.
 def MakeDirTree(curDir, selectedDir):
+	if selectedDir == '' or selectedDir == os.path.sep:
+		selectedDir = ''
 	selected = False
-	if selectedDir == curDir:
+	isOpen = False
+	if selectedDir == curDir[:-1]:
 		selected = True
+	if selectedDir.startswith(curDir[:-1]):
+		isOpen = True
 	fs = filesystem.FileSystem()
 	dirName = os.path.basename(curDir[:-1])
+
 	childArr = []
 	for subDir in fs.ListSubDirs(curDir):
 		childArr.append(MakeDirTree(os.path.join(curDir, subDir), selectedDir))
-	if curDir == "":
+
+	if curDir == '':
 		dirName = os.path.basename(fs.root)
+		
+	liClassName = ''
+	if selected:
+		liClassName += 'selected '
+	if isOpen:
+		liClassName += 'open '
+
+	if curDir == '':
+		curDir = os.path.sep
+
 	if len(childArr) > 0:
-		if selected:
-			return html.Li(className='selected', children=[
-				html.A(dirName, href=Encode(curDir)), html.Ul(children=childArr)
-			])		
-		else:
-			return html.Li(children=[
+		return html.Li(className=liClassName, children=[
 				html.A(dirName, href=Encode(curDir)), html.Ul(children=childArr)
 			])
 	else:
-		if selected:
-			return html.Li(className='selected', children=[
-				html.A(dirName, href=Encode(curDir))
-			])		
-		else:
-			return html.Li(children=[
+		return html.Li(className=liClassName, children=[
 				html.A(dirName, href=Encode(curDir))
 			])
 

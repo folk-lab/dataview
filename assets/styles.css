@@ -1,6 +1,6 @@
 #row-container:after {content: ""; display: table; clear: both;}
-#tree-div, #file-list-div {float: left; width: 20%; height: 95vh; padding: 10px;}
-#graph-div {float: left; width: 60%; height: 95vh;}
+#tree-div, #file-list-div {float: left; width: 19%; height: 95vh; padding: 10px;}
+#graph-div {float: left; width: 58%; height: 95vh;}
 
 html { font-family: "Courier New", Courier, monospace }
 ol, ul { padding: 10px; list-style:none; }
@@ -11,6 +11,8 @@ a:hover { font-weight: bold; }
 
 /* The directories' tree styles */
 #tree-div { }
+ul.tree-root li ul { display: none; }
+ul.tree-root li.open > ul { display: block; }
 ul.tree-root li, ul.tree-root li.selected > ul li {	background:url('folder.png') no-repeat 7px 5px;}
 ul.tree-root li.selected { background: url('openfolder.png') no-repeat 7px 5px; }
 ul.tree-root li.selected > a {font-size: Large; font-weight: bold;}

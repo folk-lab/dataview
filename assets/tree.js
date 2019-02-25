@@ -1,7 +1,6 @@
 /*
 window.onload = function() {
 	var tree = document.querySelectorAll('ul.tree-root a:not(:last-child)');
-	console.log(document.querySelectorAll('#ul').length);
 	for(var i = 0; i < tree.length; i++){
 		tree[i].addEventListener('click', function(e) {
 		    var parent = e.target.parentElement;

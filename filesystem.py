@@ -24,9 +24,9 @@ class FileSystem:
 				if item.isDirectory and not item.filename in ['.', '..']:
 					result.append(item.filename)
 		elif self.protocol == 'local':
-			lst = os.listdir(os.path.join(self.root, d))
+			lst = os.listdir(os.path.join(self.root, d[:-1]))
 			for item in lst:
-				if os.path.isdir(os.path.join(self.root, d, item)):
+				if os.path.isdir(os.path.join(self.root, d[:-1], item)):
 					result.append(item + os.path.sep)
 		return result
 	
@@ -49,3 +49,9 @@ class FileSystem:
 			return True
 		else:
 			return False
+			
+	def FullPath(self, path):
+		if self.protocol == 'local':
+			return os.path.join(self.root, path)
+		else:
+			return ''
