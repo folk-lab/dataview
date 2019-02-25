@@ -50,8 +50,9 @@ class FileSystem:
 				item_path = os.path.join(self.root, d, item)
 				_, item_type = os.path.splitext(item_path)
 				if ( os.path.isfile(item_path) ) and ( item_type in allowed_types ):
-					result.append(item)
-		return result
+					result.append(item_path)
+		return [os.path.basename(p)
+					for p in sorted(result, key = os.path.getmtime, reverse=True)]
 
 	def IsPlottable(self, path):
 		plottable_types = ['.h5', '.hdf5']
