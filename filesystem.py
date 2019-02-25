@@ -51,8 +51,11 @@ class FileSystem:
 					result.append(item)
 		return result
 
-	def IsFile(self, path):
-		if self.protocol == 'local' and os.path.isfile(os.path.join(self.root, path)) and path.endswith('.h5'):
+	def IsPlottable(self, path):
+		plottable_types = ['.h5', '.hdf5']
+		_, item_type = os.path.splitext(path)
+		if (self.protocol == 'local') and (os.path.isfile(os.path.join(self.root, path))) \
+		 and (item_type in plottable_types):
 			return True
 		else:
 			return False
@@ -60,5 +63,5 @@ class FileSystem:
 	def FullPath(self, path):
 		if self.protocol == 'local':
 			return os.path.join(self.root, path)
-		else:
-			return ''
+		elif self.protocol == 'samba':
+			raise NotImplementedError('Serving data from Samba shares not yet supported')
