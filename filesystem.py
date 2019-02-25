@@ -24,7 +24,8 @@ class FileSystem:
 		if self.protocol == 'samba':
 			lst = self.conn.listPath(self.serviceName, '{0:s}/{1:s}'.format(self.root, d))
 			for item in lst:
-				if item.isDirectory and not item.filename in ['.', '..']:
+				if (item.isDirectory) and not (item.filename in ['.', '..']) \
+				  and not (item.filename.startswith('.')):
 					result.append(item.filename)
 		elif self.protocol == 'local':
 			lst = os.listdir(os.path.join(self.root, d[:-1]))
