@@ -8,11 +8,11 @@ import base64
 from config import config
 from plot import Plot
 
-def CreateLayout(app):	
+def CreateLayout(app):
 	app.layout =  html.Div([
 		dcc.Location(id='url', refresh=False),
 		html.Div(id='page-contents', children=ServeLayout(''))])
-	
+
 	# This function is called every time a folder name or a file name is clicked.
 	@app.callback(dash.dependencies.Output('page-contents', 'children'),
 		[dash.dependencies.Input('url', 'pathname')])
@@ -28,7 +28,7 @@ def ServeLayout(selectedPath):
 	tree = MakeDirTree('', selectedDir)
 	treeObj = html.Ul(id='tree-root-ul', className='tree-root', children=tree)
 
-	# List all the files in the selected folder.	
+	# List all the files in the selected folder.
 	fs = filesystem.FileSystem()
 	filesArray = fs.ListFiles(selectedDir)
 	fileListHtml = []
@@ -41,7 +41,7 @@ def ServeLayout(selectedPath):
 	fileListHtml = html.Ul(id='file-list', className='file-list', children=fileListHtml)
 
 	# If a file is selected, plot it.
-	if fs.IsFile(selectedPath):
+	if fs.IsPlottable(selectedPath):
 		plot = Plot(fs.FullPath(selectedPath))
 	else:
 		plot = html.Div('')
@@ -72,7 +72,7 @@ def MakeDirTree(curDir, selectedDir):
 
 	if curDir == '':
 		dirName = os.path.basename(fs.root)
-		
+
 	liClassName = ''
 	if selected:
 		liClassName += 'selected '
@@ -95,7 +95,6 @@ def MakeDirTree(curDir, selectedDir):
 # can safely be included in a URL.
 def Encode(s):
 	return base64.b64encode(bytes(s, 'utf-8')).decode('UTF-8','ignore')
-	
+
 def Decode(n):
 	return base64.b64decode(n).decode('UTF-8','ignore')
-
