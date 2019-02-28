@@ -10,6 +10,7 @@ import layout
 from config import config
 
 app = dash.Dash(__name__)
+app.title='Data Viewer'
 
 app.config.suppress_callback_exceptions = True
 app.css.config.serve_locally = True
@@ -19,5 +20,3 @@ layout.CreateLayout(app)
 
 if __name__ == '__main__':
 	app.run_server(debug=True)
-
-

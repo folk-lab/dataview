@@ -37,8 +37,10 @@ class FileSystem:
 		return result
 
 	def ListFiles(self, d):
+
 		result = []
-		allowed_types = ['.h5', '.hdf5', '.ibw', '.png', '.jpg', '.jpeg']
+		displayed_types = ['.h5', '.hdf5', '.ibw', '.png', '.jpg', '.jpeg']
+
 		if self.protocol == 'samba':
 			lst = self.conn.listPath('zum$', '{0:s}/{1:s}'.format(self.root, d))
 			for item in lst:
@@ -49,7 +51,7 @@ class FileSystem:
 			for item in lst:
 				item_path = os.path.join(self.root, d, item)
 				_, item_type = os.path.splitext(item_path)
-				if ( os.path.isfile(item_path) ) and ( item_type in allowed_types ):
+				if ( os.path.isfile(item_path) ) and ( item_type in displayed_types ):
 					result.append(item_path)
 		return [os.path.basename(p)
 					for p in sorted(result, key = os.path.getmtime, reverse=True)]
