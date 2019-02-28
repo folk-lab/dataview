@@ -4,6 +4,7 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import h5py
 import os
+from app import app
 
 def find_default_arrays(name_list):
 	endings = ['','data','array','arr','_data', '_array','_arr']
@@ -25,39 +26,59 @@ def find_default_arrays(name_list):
 	return xname, yname
 
 # only supports hdf5 files (for now, at least)
-class Dataset:
+def get_dataset_menus(file_path):
 
-	def __init__(self, file_path):
-		self.f = h5py.File(file_path, 'r') # load file object
+	with h5py.File(file_path, 'r') as f: # load file object
 
 		# find all datasets in hdf5 tree
-		self.names = ['-'] # this array will hold the datasets
+		names = ['-'] # this array will hold the datasets
 		def find_datasets(name, h5obj):
 			""" this function is called as visititems walks the filetree """
-			if type(self.f[name])==h5py._hl.dataset.Dataset:
-				self.names.append(name)
+			if type(f[name])==h5py._hl.dataset.Dataset:
+				names.append(name)
 
-		self.f['/'].visititems(find_datasets) # collect list of datasets
-		self.xdefault, self.ydefault = find_default_arrays(self.names)
-		self.zdefault = '-'
-		print(self.xdefault, self.ydefault, self.zdefault)
+		f['/'].visititems(find_datasets) # collect list of datasets
+		xdefault, ydefault = find_default_arrays(names)
+		zdefault = '-'
 
-	def plot(self, xname, yname, zname, **kwargs):
+		return html.Div(
+		    [
+				html.Div(id='file-path', children=file_path, style={'display': 'none'}),
+		        html.Div([
+		        dcc.Dropdown(
+		            id='x-dropdown',
+		            options=[{'label':name, 'value':name} for name in names],
+		            value = xdefault,
+					clearable=False,),
+		            ],
+				style={'width': '19%', 'margin-left': '0', 'margin-right': '0.5%', 'display': 'inline-block'}
+				),
+		        html.Div([
+		        dcc.Dropdown(
+		            id='y-dropdown',
+					options=[{'label':name, 'value':name} for name in names],
+		            value = ydefault,
+					clearable=False,),
+		            ],
+				style={'width': '19%', 'margin-left': '0.5%', 'margin-right': '0.5%', 'display': 'inline-block'}
+				),
+				html.Div([
+		        dcc.Dropdown(
+		            id='z-dropdown',
+					options=[{'label':name, 'value':name} for name in names],
+		            value = zdefault,
+					clearable=False,),
+		            ],
+				style={'width': '19%', 'margin-left': '0.5%', 'margin-right': '0', 'display': 'inline-block'}
+				),
+		    ],
+		)
 
-		x = self.f[xname][:]
-		y = self.f[yname][:]
-		if zname=='-':
-			# 2d plot
-			z = self.f[zname][:]
-			# self._plot2d(self, x, y, z, **kwargs)
-			return html.Div(xname, yname, zname)
-		else:
-			#1d plot
-			self._plot1d(self, x, y, **kwargs)
-			return html.Div(xname, yname)
+def _plot1d(x, y, **kwargs):
+	return html.Div('no 1d plot available yet')
 
-	def _plot1d(self, x, y, **kwargs):
-		return html.Div('no 1d plot available yet')
+def _plot2d(x, y, z, **kwargs):
+	return html.Div('no 1d plot available yet')
 
-	def _plot2d(self, x, y, z, **kwargs):
-		return html.Div('no 1d plot available yet')
+	# with h5py.File(file_path, 'r') as f: # load file object
+		# return f'array(s) changed! {xname}, {yname}, {zname}'

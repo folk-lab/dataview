@@ -7,20 +7,15 @@ import base64
 from config import config
 import filesystem as fsys
 import dataset as ds
+from app import app
 
-def CreateLayout(app):
-	app.layout =  html.Div([
-		dcc.Location(id='url', refresh=False),
-		html.Div(id='page-contents', children=ServeLayout(''))])
+# Encode the folder and file names into something that
+# can safely be included in a URL.
+def Encode(s):
+	return base64.b64encode(bytes(s, 'utf-8')).decode('UTF-8','ignore')
 
-	# This function is called every time a folder name or a file name is clicked.
-	@app.callback(dash.dependencies.Output('page-contents', 'children'),
-		[dash.dependencies.Input('url', 'pathname')])
-	def ProcessUrl(selectedPath):
-		if selectedPath is None:
-			return ServeLayout('')
-		else:
-			return ServeLayout(Decode(selectedPath[1:]))
+def Decode(n):
+	return base64.b64decode(n).decode('UTF-8','ignore')
 
 def ServeLayout(selectedPath):
 	# Create a folder tree
@@ -40,56 +35,26 @@ def ServeLayout(selectedPath):
 			fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath))))
 	fileListHtml = html.Ul(id='file-list', className='file-list', children=fileListHtml)
 
-	# is plottable checks if the selected path is a
+	# isPlottable() checks if the selected path is a
 	#    file of a type that we can handle
 	if fs.IsPlottable(selectedPath):
 		# print(selectedPath)
 		# xlist, ylist, zlist = ds.ListDatasets()
-		dset = ds.Dataset(fs.FullPath(selectedPath))
-		dropdowns = html.Div(
-		    [
-		        html.Div([
-		        dcc.Dropdown(
-		            id='x-dropdown',
-		            options=[{'label':name, 'value':name} for name in dset.names],
-		            value = dset.xdefault,
-					clearable=False,),
-		            ],
-				style={'width': '19%', 'margin-left': '0', 'margin-right': '0.5%', 'display': 'inline-block'}
-				),
-		        html.Div([
-		        dcc.Dropdown(
-		            id='y-dropdown',
-					options=[{'label':name, 'value':name} for name in dset.names],
-		            value = dset.ydefault,
-					clearable=False,),
-		            ],
-				style={'width': '19%', 'margin-left': '0.5%', 'margin-right': '0.5%', 'display': 'inline-block'}
-				),
-				html.Div([
-		        dcc.Dropdown(
-		            id='z-dropdown',
-					options=[{'label':name, 'value':name} for name in dset.names],
-		            value = dset.zdefault,
-					clearable=False,),
-		            ],
-				style={'width': '19%', 'margin-left': '0.5%', 'margin-right': '0', 'display': 'inline-block'}
-				),
-		    ],
-		)
-		plot = html.Div(
-				html.P('Select data to plot...'),
-			   )
-		# plot = dset.plot()
+		full_path = fs.FullPath(selectedPath)
+		graphs = html.Div(
+						[ds.get_dataset_menus(full_path),
+						 html.Div(
+						 	id='data_plot', children=[html.P('Select data to plot...')]
+						 ),
+						]
+					)
 	else:
-		dropdowns = html.Div('')
-		plot = html.Div('')
+		graphs = html.Div('')
 
 	return [html.Div(id='row-container',
 			children=[html.Div(id='tree-div', children=treeObj),
 			html.Div(id='file-list-div', children=[fileListHtml]),
-			html.Div(id='graph-div', children=[dropdowns, plot])])]
-
+			html.Div(id='graph-div', children=[graphs])])]
 
 # A recusive function that generates a tree structure
 # using <ul> and <li> HTML elements.
@@ -130,10 +95,24 @@ def MakeDirTree(curDir, selectedDir):
 				html.A(dirName, href=Encode(curDir))
 			])
 
-# Encode the folder and file names into something that
-# can safely be included in a URL.
-def Encode(s):
-	return base64.b64encode(bytes(s, 'utf-8')).decode('UTF-8','ignore')
+# create app layout
+app.layout =  html.Div([
+	dcc.Location(id='url', refresh=False),
+	html.Div(id='page-contents', children=ServeLayout(''))])
 
-def Decode(n):
-	return base64.b64decode(n).decode('UTF-8','ignore')
+# This function is called every time a folder name or a file name is clicked.
+@app.callback(dash.dependencies.Output('page-contents', 'children'),
+	[dash.dependencies.Input('url', 'pathname')])
+def ProcessUrl(selectedPath):
+	if selectedPath is None:
+		return ServeLayout('')
+	else:
+		return ServeLayout(Decode(selectedPath[1:]))
+
+@app.callback(dash.dependencies.Output('data-plot', 'children'),
+	[dash.dependencies.Input('x-dropdown', 'value')])
+def update_plot(xname):
+	print('got callback!')
+
+if __name__ == '__main__':
+	app.run_server(debug=True)
