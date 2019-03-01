@@ -78,7 +78,10 @@ def get_dataset_menus(file_path):
 	 dash.dependencies.Input('y-dropdown', 'value'),
 	 dash.dependencies.Input('z-dropdown', 'value')])
 def update_plot(fname, xname, yname, zname):
-	return html.P(f'{fname}: {xname}, {yname}, {zname}')
+	with h5py.File(fname, 'r') as f: # load file object
+		# this is a place holder
+		# replace this html.P with some logic and plots
+		return html.P(f'{fname}: {xname}, {yname}, {zname}')
 
 def _plot1d(x, y, **kwargs):
 	return html.Div('no 1d plot available yet')
