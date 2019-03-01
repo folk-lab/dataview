@@ -2,6 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
+import numpy as np
 import h5py
 import os, re
 from app import app
@@ -79,6 +80,17 @@ def get_dataset_menus(file_path):
 		    ],
 		)
 
+def check_data_shapes(x, y, z=None):
+
+	# now check the shape of everything
+	if z is None:
+		if len(x)==len(y):
+			return True
+	else:
+		if z.shape==(len(y),len(x)):
+			return True
+	return False
+
 @app.callback(dash.dependencies.Output('plot-area', 'children'),
 	[dash.dependencies.Input('file-path', 'children'),
 	 dash.dependencies.Input('x-dropdown', 'value'),
@@ -86,15 +98,86 @@ def get_dataset_menus(file_path):
 	 dash.dependencies.Input('z-dropdown', 'value')])
 def update_plot(fname, xname, yname, zname):
 	with h5py.File(fname, 'r') as f: # load file object
-		# this is a place holder
-		# replace this html.P with some logic and plots
-		return html.P(f'{fname}: {xname}, {yname}, {zname}')
+
+		# load x and y data
+		if xname!='-' and yname!='-':
+			x = f[xname][:]
+			y = f[yname][:]
+
+			# check if these arrays are 1d
+			if (x.ndim==1 or x.shape[0]==1) and (y.ndim==1 or y.shape[0]==1):
+				x = np.ravel(x)
+				y = np.ravel(y)
+			else:
+				return html.P('ShapeError: x and y should be 1d arrays')
+		else:
+			return html.P('MissingDataError: Need both x and y arrays')
+
+		# load z data
+		if zname=='-':
+			z = None
+			return _plot1d(x, y)
+		else:
+			z = f[zname][:]
+			if (z.ndim==1 or z.shape[0]==1):
+				return _plot1d(x, np.ravel(z))
+			elif z.shape[1]==0:
+				return _plot1d(y, np.ravel(z))
+			else:
+				return _plot2d(x,y,z)
+
 
 def _plot1d(x, y, **kwargs):
-	return html.Div('no 1d plot available yet')
+
+	if check_data_shapes(x, y, z=None):
+
+		data = go.Scatter(
+			x = x,
+			y = y,
+			mode = 'lines',
+		)
+
+		graph_elem = dcc.Graph(
+	        figure={
+	            'data': [data],
+	            'layout': go.Layout(
+	            #     xaxis={'type': 'log', 'title': 'GDP Per Capita'},
+	            #     yaxis={'title': 'Life Expectancy'},
+	            #     margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+	            #     legend={'x': 0, 'y': 1},
+	                hovermode='closest'
+	            )
+	        }
+	    )
+
+		return graph_elem
+	else:
+		return html.P('ShapeError: x and y array shapes not consistent')
 
 def _plot2d(x, y, z, **kwargs):
-	return html.Div('no 1d plot available yet')
 
-	# with h5py.File(file_path, 'r') as f: # load file object
-		# return f'array(s) changed! {xname}, {yname}, {zname}'
+	if check_data_shapes(x, y, z=z):
+
+		data = go.Heatmap(
+			z = z,
+			x = x,
+			y = y,
+			colorscale='Viridis',
+		)
+
+		graph_elem = dcc.Graph(
+	        figure={
+	            'data': [data],
+	            'layout': go.Layout(
+	            #     xaxis={'type': 'log', 'title': 'GDP Per Capita'},
+	            #     yaxis={'title': 'Life Expectancy'},
+	            #     margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+	            #     legend={'x': 0, 'y': 1},
+	                hovermode='closest'
+	            )
+	        }
+	    )
+		
+		return graph_elem
+	else:
+		return html.P('ShapeError: x, y, and z array shapes not consistent')
