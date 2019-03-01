@@ -19,7 +19,7 @@ def Decode(n):
 
 def ServeLayout(selected_path):
 
-	fs = fsys.FileSystem()
+        fs = fsys.FileSystem()
 	full_path = fs.FullPath(selected_path)
 
 	# Create a folder tree
@@ -103,5 +103,7 @@ def ProcessUrl(selected_path):
 	else:
 		return ServeLayout(Decode(selected_path[1:]))
 
+server = app.server
+
 if __name__ == '__main__':
-	app.run_server(debug=True)
+    app.run_server(debug=True, host=‘0.0.0.0’, port=8082, threaded=True)
