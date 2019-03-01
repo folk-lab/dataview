@@ -41,7 +41,7 @@ def get_dataset_menus(file_path):
 		zdefault = '-'
 
 		return html.Div(
-		    [
+		       [html.Div(id='file-path', children=file_path, style={'display': 'none'}),
 		        html.Div([
 		        dcc.Dropdown(
 		            id='x-dropdown',
@@ -72,6 +72,13 @@ def get_dataset_menus(file_path):
 		    ],
 		)
 
+@app.callback(dash.dependencies.Output('plot-area', 'children'),
+	[dash.dependencies.Input('file-path', 'children'),
+	 dash.dependencies.Input('x-dropdown', 'value'),
+	 dash.dependencies.Input('y-dropdown', 'value'),
+	 dash.dependencies.Input('z-dropdown', 'value')])
+def update_plot(fname, xname, yname, zname):
+	return html.P(f'{fname}: {xname}, {yname}, {zname}')
 
 def _plot1d(x, y, **kwargs):
 	return html.Div('no 1d plot available yet')

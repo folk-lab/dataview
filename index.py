@@ -44,8 +44,7 @@ def ServeLayout(selected_path):
 	else:
 		gd = [html.Div(id='plot-area', children=html.P('Select a dataset...')), ]
 
-	return [html.Div(id='file-path', children=full_path, style={'display': 'none'}),
-			html.Div(id='row-container',
+	return [html.Div(id='row-container',
 			children=[html.Div(id='tree-div', children=treeObj),
 			html.Div(id='file-list-div', children=[fileListHtml]),
 			html.Div(id='graph-div', children=gd)])]
@@ -93,13 +92,6 @@ def MakeDirTree(curDir, selectedDir):
 app.layout =  html.Div([
 	dcc.Location(id='url', refresh=False),
 	html.Div(id='page-contents', children=ServeLayout(''))])
-
-@app.callback(dash.dependencies.Output('plot-area', 'children'),
-	[dash.dependencies.Input('x-dropdown', 'value'),
-	 dash.dependencies.Input('y-dropdown', 'value'),
-	 dash.dependencies.Input('z-dropdown', 'value')])
-def update_plot(xname, yname, zname):
-	return html.P(f'{xname}, {yname}, {zname}')
 
 # This function is called every time a folder name or a file name is clicked.
 @app.callback(dash.dependencies.Output('page-contents', 'children'),
