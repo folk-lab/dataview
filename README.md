@@ -13,3 +13,8 @@ If your files are accessed via Samba, you need [PySmb](https://pysmb.readthedocs
 ```
 sudo pip3 install pysmb
 ```
+
+To run the app with the test server...
+```
+python index.py
+```
