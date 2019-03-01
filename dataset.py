@@ -3,26 +3,33 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import h5py
-import os
+import os, re
 from app import app
 
 def find_default_arrays(name_list):
 	endings = ['','data','array','arr','_data', '_array','_arr']
-	x_choices = ['x'+end for end in endings]
-	y_choices = ['y'+end for end in endings]
 
 	xname = None
 	yname = None
 	for n in name_list:
-		if not xname and (n in x_choices):
-			xname = n
-		elif not yname and (n in y_choices):
-			yname = n
+		for end in endings:
+			seq = re.compile(f'(\w+/)*([xy]){end}$')
+			m = re.match(seq, n)
+			if m:
+				if m.group(2)=='x' and not xname:
+					xname = n
+					break
+				if  m.group(2)=='y' and not yname:
+					yname = n
+					break
+			if xname and yname:
+				return xname, yname
 
 	if not xname:
 		xname = '-'
 	if not yname:
 		yname = '-'
+
 	return xname, yname
 
 def get_dataset_menus(file_path):
