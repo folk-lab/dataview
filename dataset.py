@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 import numpy as np
 import h5py
 import os, re
-from dataview import app
+from app import app
 
 def find_default_arrays(name_list):
 	endings = ['','data','array','arr','_data', '_array','_arr']

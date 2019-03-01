@@ -7,7 +7,7 @@ import base64
 from config import config
 import filesystem as fsys
 import dataset as ds
-from dataview import app
+from app import app
 
 # Encode the folder and file names into something that
 # can safely be included in a URL.
