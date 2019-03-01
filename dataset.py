@@ -25,7 +25,6 @@ def find_default_arrays(name_list):
 		yname = '-'
 	return xname, yname
 
-# only supports hdf5 files (for now, at least)
 def get_dataset_menus(file_path):
 
 	with h5py.File(file_path, 'r') as f: # load file object
@@ -43,7 +42,6 @@ def get_dataset_menus(file_path):
 
 		return html.Div(
 		    [
-				html.Div(id='file-path', children=file_path, style={'display': 'none'}),
 		        html.Div([
 		        dcc.Dropdown(
 		            id='x-dropdown',
@@ -73,6 +71,7 @@ def get_dataset_menus(file_path):
 				),
 		    ],
 		)
+
 
 def _plot1d(x, y, **kwargs):
 	return html.Div('no 1d plot available yet')

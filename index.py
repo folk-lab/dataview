@@ -17,44 +17,38 @@ def Encode(s):
 def Decode(n):
 	return base64.b64decode(n).decode('UTF-8','ignore')
 
-def ServeLayout(selectedPath):
+def ServeLayout(selected_path):
+
+	fs = fsys.FileSystem()
+	full_path = fs.FullPath(selected_path)
+
 	# Create a folder tree
-	selectedDir = os.path.dirname(selectedPath)
+	selectedDir = os.path.dirname(selected_path)
 	tree = MakeDirTree('', selectedDir)
 	treeObj = html.Ul(id='tree-root-ul', className='tree-root', children=tree)
 
 	# List all the files in the selected folder.
-	fs = fsys.FileSystem()
 	filesArray = fs.ListFiles(selectedDir)
 	fileListHtml = []
 	for fn in filesArray:
 		filePath = os.path.join(selectedDir, fn)
-		if filePath == selectedPath:
+		if filePath == selected_path:
 			fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath)), className='selected'))
 		else:
 			fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath))))
 	fileListHtml = html.Ul(id='file-list', className='file-list', children=fileListHtml)
 
-	# isPlottable() checks if the selected path is a
-	#    file of a type that we can handle
-	if fs.IsPlottable(selectedPath):
-		# print(selectedPath)
-		# xlist, ylist, zlist = ds.ListDatasets()
-		full_path = fs.FullPath(selectedPath)
-		graphs = html.Div(
-						[ds.get_dataset_menus(full_path),
-						 html.Div(
-						 	id='data_plot', children=[html.P('Select data to plot...')]
-						 ),
-						]
-					)
+	if fs.IsPlottable(selected_path):
+		gd = [ds.get_dataset_menus(full_path),
+				html.Div(id='plot-area', children=html.P('Select arrays...'))]
 	else:
-		graphs = html.Div('')
+		gd = [html.Div(id='plot-area', children=html.P('Select a dataset...')), ]
 
-	return [html.Div(id='row-container',
+	return [html.Div(id='file-path', children=full_path, style={'display': 'none'}),
+			html.Div(id='row-container',
 			children=[html.Div(id='tree-div', children=treeObj),
 			html.Div(id='file-list-div', children=[fileListHtml]),
-			html.Div(id='graph-div', children=[graphs])])]
+			html.Div(id='graph-div', children=gd)])]
 
 # A recusive function that generates a tree structure
 # using <ul> and <li> HTML elements.
@@ -100,19 +94,22 @@ app.layout =  html.Div([
 	dcc.Location(id='url', refresh=False),
 	html.Div(id='page-contents', children=ServeLayout(''))])
 
+@app.callback(dash.dependencies.Output('plot-area', 'children'),
+	[dash.dependencies.Input('x-dropdown', 'value'),
+	 dash.dependencies.Input('y-dropdown', 'value'),
+	 dash.dependencies.Input('z-dropdown', 'value')])
+def update_plot(xname, yname, zname):
+	return html.P(f'{xname}, {yname}, {zname}')
+
 # This function is called every time a folder name or a file name is clicked.
 @app.callback(dash.dependencies.Output('page-contents', 'children'),
 	[dash.dependencies.Input('url', 'pathname')])
-def ProcessUrl(selectedPath):
-	if selectedPath is None:
+def ProcessUrl(selected_path):
+
+	if selected_path is None:
 		return ServeLayout('')
 	else:
-		return ServeLayout(Decode(selectedPath[1:]))
-
-@app.callback(dash.dependencies.Output('data-plot', 'children'),
-	[dash.dependencies.Input('x-dropdown', 'value')])
-def update_plot(xname):
-	print('got callback!')
+		return ServeLayout(Decode(selected_path[1:]))
 
 if __name__ == '__main__':
 	app.run_server(debug=True)

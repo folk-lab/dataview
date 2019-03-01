@@ -18,7 +18,6 @@ class FileSystem:
 		elif self.protocol == 'local':
 			self.root = config['LocalRootDirectory']
 
-
 	def ListSubDirs(self, d):
 		result = []
 		if self.protocol == 'samba':
