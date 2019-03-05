@@ -1,6 +1,6 @@
 config = {
 	'FileServerProtocol':	'local', #local, samba, ...
-	'LocalRootDirectory':	'/Users/nik/Desktop',
+	'LocalRootDirectory':	'/measurement-data',
 	# 'SambaServername':		'phys-jumbo.physik.unibas.ch',
 	# 'SambaServiceName':		'zum$',
 	# 'SambaServerIP':		'10.34.8.3',

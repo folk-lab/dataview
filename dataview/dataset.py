@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
-import numpy as np
+#import numpy as np
 import h5py
 import os, re
 from dataview import app
