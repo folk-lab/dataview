@@ -4,7 +4,7 @@ app = dash.Dash(__name__)
 app.title='Data Viewer'
 
 app.config.suppress_callback_exceptions = True
-app_dash.config.update({
+app.config.update({
     # remove the default of '/'
     'routes_pathname_prefix': '',
 
