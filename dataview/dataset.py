@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
-#import numpy as np
+import numpy as np
 import h5py
 import os, re
 from dataview import app
@@ -105,11 +105,11 @@ def update_plot(fname, xname, yname, zname):
 			y = f[yname][:]
 
 			# check if these arrays are 1d
-			# if (x.ndim==1 or x.shape[0]==1) and (y.ndim==1 or y.shape[0]==1):
-			# 	x = np.ravel(x)
-			# 	y = np.ravel(y)
-			# else:
-			# 	return html.P('ShapeError: x and y should be 1d arrays')
+			if (x.ndim==1 or x.shape[0]==1) and (y.ndim==1 or y.shape[0]==1):
+				x = np.ravel(x)
+				y = np.ravel(y)
+			else:
+				return html.P('ShapeError: x and y should be 1d arrays')
 		else:
 			return html.P('MissingDataError: Need both x and y arrays')
 
@@ -129,8 +129,7 @@ def update_plot(fname, xname, yname, zname):
 
 def _plot1d(x, y, **kwargs):
 
-	# if check_data_shapes(x, y, z=None):
-	if 1==2:
+	if check_data_shapes(x, y, z=None):
 		data = go.Scatter(
 			x = x,
 			y = y,
@@ -141,10 +140,10 @@ def _plot1d(x, y, **kwargs):
 	        figure={
 	            'data': [data],
 	            'layout': go.Layout(
-	            #     xaxis={'type': 'log', 'title': 'GDP Per Capita'},
-	            #     yaxis={'title': 'Life Expectancy'},
-	            #     margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-	            #     legend={'x': 0, 'y': 1},
+	                xaxis={'type': 'log', 'title': 'GDP Per Capita'},
+	                yaxis={'title': 'Life Expectancy'},
+	                margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+	                legend={'x': 0, 'y': 1},
 	                hovermode='closest'
 	            )
 	        }
@@ -156,8 +155,7 @@ def _plot1d(x, y, **kwargs):
 
 def _plot2d(x, y, z, **kwargs):
 
-	# if check_data_shapes(x, y, z=z):
-	if 1==2:
+	if check_data_shapes(x, y, z=z):
 		data = go.Heatmap(
 			z = z,
 			x = x,
@@ -169,10 +167,10 @@ def _plot2d(x, y, z, **kwargs):
 	        figure={
 	            'data': [data],
 	            'layout': go.Layout(
-	            #     xaxis={'type': 'log', 'title': 'GDP Per Capita'},
-	            #     yaxis={'title': 'Life Expectancy'},
-	            #     margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-	            #     legend={'x': 0, 'y': 1},
+	                xaxis={'type': 'log', 'title': 'GDP Per Capita'},
+	                yaxis={'title': 'Life Expectancy'},
+	                margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+	                legend={'x': 0, 'y': 1},
 	                hovermode='closest'
 	            )
 	        }
