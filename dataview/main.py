@@ -19,8 +19,8 @@ def Decode(n):
 
 def ServeLayout(selected_path):
 
-	fs = fsys.FileSystem()
-	full_path = fs.FullPath(selected_path)
+        fs = fsys.FileSystem()
+        full_path = fs.FullPath(selected_path)
 
 	# Create a folder tree
 	selectedDir = os.path.dirname(selected_path)
