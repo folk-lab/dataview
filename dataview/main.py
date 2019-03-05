@@ -5,8 +5,8 @@ import dash_html_components as html
 import base64
 
 from config import config
-import dataview.filesystem as fsys
-import dataview.dataset as ds
+from dataview import filesystem as fsys
+from dataview import dataset as ds
 from dataview import app
 
 # Encode the folder and file names into something that

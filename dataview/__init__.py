@@ -7,8 +7,8 @@ app.config.suppress_callback_exceptions = True
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
 
-import dataview.main
-import dataview.filesystem
-import dataview.dataset
+from dataview import main
+from dataview import filesystem
+from dataview import dataset
 
 server = app.server
