@@ -5,8 +5,8 @@ import dash_html_components as html
 import base64
 
 from config import config
-import filesystem as fsys
-import dataset as ds
+import dataview.filesystem as fsys
+import dataview.dataset as ds
 from dataview import app
 
 # Encode the folder and file names into something that
@@ -102,6 +102,3 @@ def ProcessUrl(selected_path):
 		return ServeLayout('')
 	else:
 		return ServeLayout(Decode(selected_path[1:]))
-
-if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port=8082, threaded=True)
