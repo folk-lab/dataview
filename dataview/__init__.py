@@ -3,8 +3,15 @@ import dash
 app = dash.Dash(__name__)
 app.title='Data Viewer'
 
-app.config.requests_pathname_prefix = ''
 app.config.suppress_callback_exceptions = True
+app_dash.config.update({
+    # remove the default of '/'
+    'routes_pathname_prefix': '',
+
+    # remove the default of '/'
+    'requests_pathname_prefix': ''
+})
+
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
 
