@@ -105,11 +105,11 @@ def update_plot(fname, xname, yname, zname):
 			y = f[yname][:]
 
 			# check if these arrays are 1d
-			if (x.ndim==1 or x.shape[0]==1) and (y.ndim==1 or y.shape[0]==1):
-				x = np.ravel(x)
-				y = np.ravel(y)
-			else:
-				return html.P('ShapeError: x and y should be 1d arrays')
+			# if (x.ndim==1 or x.shape[0]==1) and (y.ndim==1 or y.shape[0]==1):
+			# 	x = np.ravel(x)
+			# 	y = np.ravel(y)
+			# else:
+			# 	return html.P('ShapeError: x and y should be 1d arrays')
 		else:
 			return html.P('MissingDataError: Need both x and y arrays')
 
@@ -129,8 +129,8 @@ def update_plot(fname, xname, yname, zname):
 
 def _plot1d(x, y, **kwargs):
 
-	if check_data_shapes(x, y, z=None):
-
+	# if check_data_shapes(x, y, z=None):
+	if 1==2:
 		data = go.Scatter(
 			x = x,
 			y = y,
@@ -156,8 +156,8 @@ def _plot1d(x, y, **kwargs):
 
 def _plot2d(x, y, z, **kwargs):
 
-	if check_data_shapes(x, y, z=z):
-
+	# if check_data_shapes(x, y, z=z):
+	if 1==2:
 		data = go.Heatmap(
 			z = z,
 			x = x,
