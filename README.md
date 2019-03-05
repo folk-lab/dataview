@@ -16,5 +16,5 @@ sudo pip3 install pysmb
 
 To run the app with the test server...
 ```
-python index.py
+????
 ```

@@ -7,7 +7,7 @@ import base64
 from config import config
 import filesystem as fsys
 import dataset as ds
-from app import app
+from dataview import app
 
 # Encode the folder and file names into something that
 # can safely be included in a URL.
@@ -102,8 +102,6 @@ def ProcessUrl(selected_path):
 		return ServeLayout('')
 	else:
 		return ServeLayout(Decode(selected_path[1:]))
-
-server = app.server
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port=8082, threaded=True)

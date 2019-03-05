@@ -8,3 +8,7 @@ app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
 
 import dataview.main
+import dataview.filsystem
+import dataview.dataset
+
+server = app.server
