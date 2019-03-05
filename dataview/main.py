@@ -18,10 +18,10 @@ def Decode(n):
     return base64.b64decode(n).decode('UTF-8','ignore')
 
 def ServeLayout(selected_path):
-        
+
         fs = fsys.FileSystem()
         full_path = fs.FullPath(selected_path)
-        
+
         #Create a folder tree
         selectedDir = os.path.dirname(selected_path)
         tree = MakeDirTree('', selectedDir)
@@ -43,7 +43,7 @@ def ServeLayout(selected_path):
                     html.Div(id='plot-area', children=html.P('Select arrays...'))]
         else:
             gd = [html.Div(id='plot-area', children=html.P('Select a dataset...')), ]
-	
+
         return [html.Div(id='row-container',
                 children=[html.Div(id='tree-div', children=treeObj),
                         html.Div(id='file-list-div', children=[fileListHtml]),
@@ -95,7 +95,7 @@ app.layout =  html.Div([
 
 # This function is called every time a folder name or a file name is clicked.
 @app.callback(dash.dependencies.Output('page-contents', 'children'),
-                dash.dependencies.Input('url', 'pathname'))
+                [dash.dependencies.Input('url', 'pathname')])
 def ProcessUrl(selected_path):
 
         if selected_path is None:
