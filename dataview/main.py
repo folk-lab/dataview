@@ -1,8 +1,8 @@
 import os
+from urllib.parse import quote_plus, unquote_plus
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import base64
 
 from config import config
 from dataview import filesystem as fsys
@@ -12,10 +12,10 @@ from dataview import app
 # Encode the folder and file names into something that
 # can safely be included in a URL.
 def Encode(s):
-    return base64.b64encode(bytes(s, 'utf-8')).decode('UTF-8','ignore')
+    return quote_plus(s)
 
 def Decode(n):
-    return base64.b64decode(n).decode('UTF-8','ignore')
+    return unquote_plus(n)
 
 def ServeLayout(selected_path):
 
