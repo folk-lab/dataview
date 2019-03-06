@@ -97,11 +97,12 @@ app.layout =  html.Div([
 @app.callback(dash.dependencies.Output('page-contents', 'children'),
                 [dash.dependencies.Input('url', 'pathname')])
 def ProcessUrl(selected_path):
-
         if selected_path is None:
             return ServeLayout('')
         else:
-            path = Decode(selected_path[1:])
-            if len(path)>0:
-                path = path.split('/')[-1]
-            return ServeLayout(path)
+            path = Decode(selected_path)
+            if 'ServerSubdirectory' in config:
+                subdir = config['ServerSubdirectory']
+                return ServeLayout(path[len(subdir):])
+            else:
+                return ServeLayout(path[1:])
