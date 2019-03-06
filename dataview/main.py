@@ -1,4 +1,5 @@
 import os
+import logging
 from urllib.parse import quote_plus, unquote_plus
 import dash
 import dash_core_components as dcc
@@ -97,6 +98,8 @@ app.layout =  html.Div([
 @app.callback(dash.dependencies.Output('page-contents', 'children'),
                 [dash.dependencies.Input('url', 'pathname')])
 def ProcessUrl(selected_path):
+        logging.info(selected_path)
+        
         if selected_path is None:
             return ServeLayout('')
         else:
