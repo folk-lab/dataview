@@ -25,7 +25,6 @@ app.config.update({
      'requests_pathname_prefix': ''
      })
 
-app._assets_url_path = 'assets'
 app.config.suppress_callback_exceptions = True
 app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
