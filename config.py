@@ -7,8 +7,8 @@ config = {
 
 	#		LocalRootDirectory is the full system path to
 	#		the root of the data folder file tree
-	'LocalRootDirectory':   '/Users/nik/Dropbox/data_2018',
-	# 'LocalRootDirectory':	'/measurement-data',
+	#'LocalRootDirectory':   '/Users/nik/Dropbox/data_2018',
+	'LocalRootDirectory':	'/measurement-data',
 	#		LoggingDirectory is the full system path to a directory
 	#		where log files will be stored for this application
 	#		defaults to ./logs
@@ -24,11 +24,8 @@ config = {
 	# 'SambaRootDirectory':	'Measurement_Data',
 
 	### Apache deployment: ###
-	#		ApplicationDirectory is the full system path to
-	#		the directory hosting the dataview application
-	'ApplicationDirectory': '/srv/www/dataview'
 	#		ServerSubdirectory is the name of a subdirectory
 	#		that hosts the Dash app
 	#		for example: my-server.ca/dataview
-	# 'ServerSubdirectory':   '/dataview',
+	'ServerSubdirectory':   '/dataview',
 }

@@ -21,7 +21,6 @@ def Decode(n):
 
 def ServeLayout(selected_path):
 
-        _main_logger.debug(f'serving: {selected_path}')
         fs = fsys.FileSystem()
         full_path = fs.FullPath(selected_path)
 
@@ -101,15 +100,25 @@ app.layout =  html.Div([
                 [dash.dependencies.Input('url', 'pathname')])
 def ProcessUrl(selected_path):
 
-        _main_logger.debug(f'pathname to process: {selected_path}')
+        _main_logger.debug(f'got pathname: {selected_path}')
+
         if (selected_path is None):
+            _main_logger.debug('Serving root path')
             return ServeLayout('')
 
-        path = Decode(selected_path)[1:]
+        path = Decode(selected_path).lstrip('/')
 
         if 'ServerSubdirectory' in config:
-            subdir = config['ServerSubdirectory']
+            subdir = config['ServerSubdirectory'].lstrip('/')
+            _main_logger.debug(f'found ServerSubdirectory: {subdir}')
         else:
             subdir = ''
-            
-        return ServeLayout(path[len(subdir):])
+
+        path = path[len(subdir):]
+
+        if (path=='') or (path=='/'):
+            _main_logger.debug('Serving root path')
+            return ServeLayout('')
+        else:
+            _main_logger.debug(f'Serving: {path}')
+            return ServeLayout(path)
