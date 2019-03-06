@@ -101,4 +101,7 @@ def ProcessUrl(selected_path):
         if selected_path is None:
             return ServeLayout('')
         else:
-            return ServeLayout(Decode(selected_path[1:]))
+            path = Decode(selected_path[1:])
+            if len(path)>0:
+                path = path.split('/')[-1]
+            return ServeLayout(path)
