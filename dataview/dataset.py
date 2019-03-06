@@ -1,10 +1,12 @@
+import os, re
+import logging
+_ds_logger = logging.getLogger('dataview.dataset')
+import numpy as np
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
-import numpy as np
 import h5py
-import os, re
 from dataview import app
 
 def find_default_arrays(name_list):
@@ -97,6 +99,7 @@ def check_data_shapes(x, y, z=None):
 	 dash.dependencies.Input('y-dropdown', 'value'),
 	 dash.dependencies.Input('z-dropdown', 'value')])
 def update_plot(fname, xname, yname, zname):
+	_ds_logger.debug(f'updating plot: {fname}')
 	with h5py.File(fname, 'r') as f: # load file object
 
 		# load x and y data

@@ -1,12 +1,8 @@
 import os
 import sys
-import logging
-from logging.handlers import RotatingFileHandler
+from config import config
 
-app_root = os.path.join('/srv/www/dataview')
-
-handler = RotatingFileHandler(os.path.join(app_root,'logs/dataview.log'), maxBytes=10000, backupCount=1)
-handler.setLevel(logging.DEBUG)
+app_root = os.path.join(config['ApplicationDirectory'])
 sys.path.insert(0, app_root)
 
 activate_this = os.path.join(app_root,'venv/bin/activate_this.py')

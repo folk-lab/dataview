@@ -1,5 +1,7 @@
 import os
-from config import config
+import logging
+_fs_logger = logging.getLogger('dataview.filesystem')
+from dataview import config
 
 class FileSystem:
 	def __init__(self):

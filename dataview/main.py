@@ -1,11 +1,12 @@
 import os
 import logging
+_main_logger = logging.getLogger('dataview.main')
 from urllib.parse import quote_plus, unquote_plus
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-from config import config
+from dataview import config
 from dataview import filesystem as fsys
 from dataview import dataset as ds
 from dataview import app
@@ -20,6 +21,7 @@ def Decode(n):
 
 def ServeLayout(selected_path):
 
+        _main_logger.debug(f'serving: {selected_path}')
         fs = fsys.FileSystem()
         full_path = fs.FullPath(selected_path)
 
@@ -99,7 +101,8 @@ app.layout =  html.Div([
                 [dash.dependencies.Input('url', 'pathname')])
 def ProcessUrl(selected_path):
 
-        if (selected_path is None) or (selected_path==''):
+        _main_logger.debug(f'pathname to process: {selected_path}')
+        if (selected_path is None):
             return ServeLayout('')
 
         path = Decode(selected_path)[1:]
@@ -108,6 +111,5 @@ def ProcessUrl(selected_path):
             subdir = config['ServerSubdirectory']
         else:
             subdir = ''
-
-        print(subdir)
+            
         return ServeLayout(path[len(subdir):])

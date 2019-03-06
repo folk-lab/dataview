@@ -1,4 +1,4 @@
-from config import config
+from dataview import config
 from smb.SMBConnection import SMBConnection
 
 class Samba:
