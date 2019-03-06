@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import dash
 import dash_core_components as dcc
@@ -98,7 +100,6 @@ app.layout =  html.Div([
                 [dash.dependencies.Input('url', 'pathname')])
 def ProcessUrl(selected_path):
 
-        selected_path = selected_path.split('/')[-1]
         if selected_path is None:
             return ServeLayout('')
         else:

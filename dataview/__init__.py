@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import dash
 
 app = dash.Dash(

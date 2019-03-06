@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from dataview import app
 
 if __name__ == '__main__':
