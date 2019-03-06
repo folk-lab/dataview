@@ -140,10 +140,10 @@ def _plot1d(x, y, **kwargs):
 	        figure={
 	            'data': [data],
 	            'layout': go.Layout(
-	                xaxis={'type': 'log', 'title': 'GDP Per Capita'},
-	                yaxis={'title': 'Life Expectancy'},
-	                margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-	                legend={'x': 0, 'y': 1},
+	                # xaxis={'type': 'log', 'title': 'GDP Per Capita'},
+	                # yaxis={'title': 'Life Expectancy'},
+	                # margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+	                # legend={'x': 0, 'y': 1},
 	                hovermode='closest'
 	            )
 	        }
@@ -167,10 +167,10 @@ def _plot2d(x, y, z, **kwargs):
 	        figure={
 	            'data': [data],
 	            'layout': go.Layout(
-	                xaxis={'type': 'log', 'title': 'GDP Per Capita'},
-	                yaxis={'title': 'Life Expectancy'},
-	                margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-	                legend={'x': 0, 'y': 1},
+	                # xaxis={'type': 'log', 'title': 'GDP Per Capita'},
+	                # yaxis={'title': 'Life Expectancy'},
+	                # margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+	                # legend={'x': 0, 'y': 1},
 	                hovermode='closest'
 	            )
 	        }
