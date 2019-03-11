@@ -102,19 +102,14 @@ def ProcessUrl(selected_path):
 
         _main_logger.debug(f'got pathname: {selected_path}')
 
-        if (selected_path is None):
-            _main_logger.debug('Serving root path')
-            return ServeLayout('')
+        #if (selected_path is None):
+        #    _main_logger.debug('Serving root path')
+        #    return ServeLayout('')
 
-        path = Decode(selected_path).lstrip('/')
-
-        if 'ServerSubdirectory' in config:
-            subdir = config['ServerSubdirectory'].lstrip('/')
-            _main_logger.debug(f'found ServerSubdirectory: {subdir}')
-        else:
-            subdir = ''
-
-        path = path[len(subdir):]
+        try:
+            path = Decode(selected_path).lstrip('/')
+        except:
+            return None
 
         if (path=='') or (path=='/'):
             _main_logger.debug('Serving root path')

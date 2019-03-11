@@ -46,6 +46,7 @@ app.scripts.config.serve_locally = True
 app.css.config.serve_locally = True
 
 app.title = 'Data Viewer'
+server = app.server
 
 from dataview import main
 from dataview import filesystem
