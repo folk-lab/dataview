@@ -3,6 +3,8 @@ Using Dash/plotly, this project is a web-interface for browsing a directory tree
 
 # Installation
 
+Install with `python setup.py develop` or `pip install -e /path/to/dataview`
+
 The code is written in Python3 and relies on the following pacakges: `h5py`,`numpy`,`dash`,`dash-core-components`, and `dash-html-components`. If your files are accessed via Samba, you also need `pysmb`
 
 To run the app with the test server...
