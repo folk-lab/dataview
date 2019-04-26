@@ -1,6 +1,6 @@
 #row-container:after {content: ""; display: table; clear: both;}
 #tree-div, #file-list-div {float: left; width: 19%; height: 95vh; padding: 10px;}
-#graph-div {float: left; width: 58%; height: 95vh;}
+#graph-div {float: left; width: 58%; height: 95vh; margin-top: 20px;}
 
 html { font-family: "Courier New", Courier, monospace }
 ol, ul { padding: 10px; list-style:none; }
