@@ -21,3 +21,5 @@ ul.tree-root li.selected > a {font-size: Large; font-weight: bold;}
 ul.file-list li {background: url('plot.png') no-repeat 7px 5px;}
 ul.file-list li.selected {background: url('openplot.png') no-repeat 7px 5px;}
 ul.file-list li.selected > a {font-size: Large; font-weight: bold;}
+
+div.dropdown {width: 19%; margin-left: 0; margin-right: 0.5%; display: inline-block;}

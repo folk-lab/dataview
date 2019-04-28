@@ -9,9 +9,11 @@ import plotly.graph_objs as go
 import h5py
 from dataview import app
 
+dropdown_callback_items = []
+
 def find_default_arrays(name_list):
 	endings = ['','data','array','arr','_data', '_array','_arr']
-
+	
 	xname = None
 	yname = None
 	for n in name_list:
@@ -49,7 +51,7 @@ def get_dataset_menus(file_path):
 		f['/'].visititems(find_datasets) # collect list of datasets
 		xdefault, ydefault = find_default_arrays(names)
 		zdefault = '-'
-
+		
 		return html.Div(
 		       [html.Div(id='file-path', children=file_path, style={'display': 'none'}),
 		        html.Div([
@@ -58,8 +60,7 @@ def get_dataset_menus(file_path):
 		            options=[{'label':name, 'value':name} for name in names],
 		            value = xdefault,
 					clearable=False,),
-		            ],
-				style={'width': '19%', 'margin-left': '0', 'margin-right': '0.5%', 'display': 'inline-block'}
+		            ],className='dropdown'
 				),
 		        html.Div([
 		        dcc.Dropdown(
@@ -67,8 +68,7 @@ def get_dataset_menus(file_path):
 					options=[{'label':name, 'value':name} for name in names],
 		            value = ydefault,
 					clearable=False,),
-		            ],
-				style={'width': '19%', 'margin-left': '0.5%', 'margin-right': '0.5%', 'display': 'inline-block'}
+		            ],className='dropdown'
 				),
 				html.Div([
 		        dcc.Dropdown(
@@ -76,30 +76,28 @@ def get_dataset_menus(file_path):
 					options=[{'label':name, 'value':name} for name in names],
 		            value = zdefault,
 					clearable=False,),
-		            ],
-				style={'width': '19%', 'margin-left': '0.5%', 'margin-right': '0', 'display': 'inline-block'}
+		            ],className='dropdown'
 				),
 		    ],
 		)
 
 def check_data_shapes(x, y, z=None):
-
 	# now check the shape of everything
 	if z is None:
 		if len(x)==len(y):
 			return True
-	else:
+	else:	
 		if z.shape==(len(y),len(x)):
 			return True
 	return False
 
 @app.callback(dash.dependencies.Output('plot-area', 'children'),
 	[dash.dependencies.Input('file-path', 'children'),
-	 dash.dependencies.Input('x-dropdown', 'value'),
-	 dash.dependencies.Input('y-dropdown', 'value'),
-	 dash.dependencies.Input('z-dropdown', 'value')])
+	dash.dependencies.Input('x-dropdown', 'value'),
+	dash.dependencies.Input('y-dropdown', 'value'),
+	dash.dependencies.Input('z-dropdown', 'value')])
 def update_plot(fname, xname, yname, zname):
-	_ds_logger.debug(f'updating plot: {fname}')
+	_ds_logger.debug(f'updating plot: {fname} {xname} {yname} {zname}')
 	with h5py.File(fname, 'r') as f: # load file object
 
 		# load x and y data
@@ -123,25 +121,18 @@ def update_plot(fname, xname, yname, zname):
 		else:
 			z = f[zname][:]
 			if (z.ndim==1 or z.shape[0]==1):
-				return _plot1d(x, np.ravel(z))
+				return _plot1d(x, y, np.ravel(z))
 			elif z.shape[1]==0:
 				return _plot1d(y, np.ravel(z))
 			else:
 				return _plot2d(x,y,z)
 
-
-def _plot1d(x, y, **kwargs):
-
-	if check_data_shapes(x, y, z=None):
-		data = go.Scatter(
-			x = x,
-			y = y,
-			mode = 'lines',
-		)
-
+def _plot1d(x, y):
+	if check_data_shapes(x, y):
+		data = go.Scatter( x = x, y = y, mode = 'lines')
 		graph_elem = dcc.Graph(
 	        figure={
-	            'data': [data],
+	            'data': data,
 	            'layout': go.Layout(
 	                # xaxis={'type': 'log', 'title': 'GDP Per Capita'},
 	                # yaxis={'title': 'Life Expectancy'},
@@ -160,9 +151,9 @@ def _plot2d(x, y, z, **kwargs):
 
 	if check_data_shapes(x, y, z=z):
 		data = go.Heatmap(
-			z = z,
 			x = x,
 			y = y,
+			z = z,
 			colorscale='Viridis',
 		)
 
