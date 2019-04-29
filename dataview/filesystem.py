@@ -33,7 +33,8 @@ class FileSystem:
 				item_path = os.path.join(self.root, d[:-1], item)
 				if os.path.isdir(item_path) \
 				  and not (os.path.basename(item_path).startswith('.')) \
-				  and not (os.path.basename(item_path).startswith('__')):
+				  and not (os.path.basename(item_path).startswith('__')) \
+				  and not (os.path.basename(item_path).startswith('config')):
 					result.append(item + os.path.sep)
 		return result
 

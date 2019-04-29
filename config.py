@@ -8,7 +8,7 @@ config = {
 	#		LocalRootDirectory is the full system path to
 	#		the root of the data folder file tree
 	#'LocalRootDirectory':   '/Users/nik/Dropbox/data_2018',
-	'LocalRootDirectory':	'/measurement-data',
+	'LocalRootDirectory':	'Z:\Measurement_Data',
 	#		LoggingDirectory is the full system path to a directory
 	#		where log files will be stored for this application
 	#		defaults to ./logs
