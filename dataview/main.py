@@ -14,106 +14,124 @@ from dataview import app
 # Encode the folder and file names into something that
 # can safely be included in a URL.
 def Encode(s):
-    return quote_plus(s)
+	return quote_plus(s)
 
 def Decode(n):
-    return unquote_plus(n)
+	return unquote_plus(n)
 
-def ServeLayout(selected_path):
+def ServeLayout(curPath):
+	fs = fsys.FileSystem()
+	fullCurPath = fs.FullPath(curPath)
+	_main_logger.debug(f'ServeLayout {curPath}')
+	# List subfolders in the left column
+	
+	curDirName = fs.GetDirName(curPath)
+	subfolderList = MakeSubDirList(curPath)
+	subfolderListObj = html.Ul(id='tree-root-ul', className='tree-root', children=subfolderList)
 
-        fs = fsys.FileSystem()
-        full_path = fs.FullPath(selected_path)
+	# List all the files in the selected folder.
+	filesArray = fs.ListFiles(curPath)
+	fileListHtml = []
+	for fn in filesArray:
+		filePath = os.path.join(curDirName, fn)
+		if filePath == curPath:
+			#fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath)), className='selected'))
+			fileListHtml.append(html.Li(dcc.Link(fn, href=Encode(filePath)), className='selected'))
+		else:
+			# fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath))))
+			fileListHtml.append(html.Li(dcc.Link(fn, href=Encode(filePath))))
+	fileListHtml = html.Ul(id='file-list', className='file-list', children=fileListHtml)
 
-        #Create a folder tree
-        selectedDir = os.path.dirname(selected_path)
-        tree = MakeDirTree('', selectedDir)
-        treeObj = html.Ul(id='tree-root-ul', className='tree-root', children=tree)
+	if fs.IsPlottable(curPath):
+		gd = [ds.get_dataset_menus(fullCurPath),
+				html.Div(id='plot-area', children=html.P('Select arrays...'))]
+	else:
+		gd = [html.Div(id='plot-area', children=html.P('Select a dataset...')), ]
 
-        # List all the files in the selected folder.
-        filesArray = fs.ListFiles(selectedDir)
-        fileListHtml = []
-        for fn in filesArray:
-                filePath = os.path.join(selectedDir, fn)
-                if filePath == selected_path:
-                    fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath)), className='selected'))
-                else:
-                    fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath))))
-        fileListHtml = html.Ul(id='file-list', className='file-list', children=fileListHtml)
+	return [html.Div(id='row-container',
+			children=[html.Div(id='tree-div', children=subfolderListObj),
+					html.Div(id='file-list-div', children=[fileListHtml]),
+					html.Div(id='graph-div', children=gd)])]
 
-        if fs.IsPlottable(selected_path):
-            gd = [ds.get_dataset_menus(full_path),
-                    html.Div(id='plot-area', children=html.P('Select arrays...'))]
-        else:
-            gd = [html.Div(id='plot-area', children=html.P('Select a dataset...')), ]
 
-        return [html.Div(id='row-container',
-                children=[html.Div(id='tree-div', children=treeObj),
-                        html.Div(id='file-list-div', children=[fileListHtml]),
-                        html.Div(id='graph-div', children=gd)])]
 
+# List all subfolders (insteda of making a tree), and add an UP button.
+def MakeSubDirList(curDir):
+	fs = fsys.FileSystem()
+	childArr = []
+	lst = fs.ListSubDirs(curDir)
+	_main_logger.debug(f'MakeSubDirList: {lst}')
+	for subDir in lst:
+		_main_logger.debug(f'subfolder: {subDir}')
+		dirName = os.path.basename(subDir)
+		#childArr.append(html.Li(children=[html.A(dirName, href=Encode(subDir))]))
+		childArr.append(html.Li(children=[dcc.Link(dirName, href=Encode(subDir))]))
+	return childArr
+	
+'''
 # A recusive function that generates a tree structure
 # using <ul> and <li> HTML elements.
 def MakeDirTree(curDir, selectedDir):
-        if selectedDir == '' or selectedDir == os.path.sep:
-                selectedDir = ''
-        selected = False
-        isOpen = False
-        if selectedDir == curDir[:-1]:
-            selected = True
-        if selectedDir.startswith(curDir[:-1]):
-            isOpen = True
-        fs = fsys.FileSystem()
-        dirName = os.path.basename(curDir[:-1])
+		if selectedDir == '' or selectedDir == os.path.sep:
+				selectedDir = ''
+		selected = False
+		isOpen = False
+		if selectedDir == curDir[:-1]:
+			selected = True
+		if selectedDir.startswith(curDir[:-1]):
+			isOpen = True
+		fs = fsys.FileSystem()
+		dirName = os.path.basename(curDir[:-1])
 
-        childArr = []
-        for subDir in fs.ListSubDirs(curDir):
-            childArr.append(MakeDirTree(os.path.join(curDir, subDir), selectedDir))
+		childArr = []
+		for subDir in fs.ListSubDirs(curDir):
+			childArr.append(MakeDirTree(os.path.join(curDir, subDir), selectedDir))
 
-        if curDir == '':
-            dirName = os.path.basename(fs.root)
+		if curDir == '':
+			dirName = os.path.basename(fs.root)
 
-        liClassName = ''
-        if selected:
-            liClassName += 'selected '
-        if isOpen:
-            liClassName += 'open '
+		liClassName = ''
+		if selected:
+			liClassName += 'selected '
+		if isOpen:
+			liClassName += 'open '
 
-        if curDir == '':
-            curDir = os.path.sep
+		if curDir == '':
+			curDir = os.path.sep
 
-        if len(childArr) > 0:
-            return html.Li(className=liClassName, children=[
-                            html.A(dirName, href=Encode(curDir)), html.Ul(children=childArr)
-                            ])
-        else:
-            return html.Li(className=liClassName, children=[
-                            html.A(dirName, href=Encode(curDir))
-                            ])
-
+		if len(childArr) > 0:
+			return html.Li(className=liClassName, children=[
+							html.A(dirName, href=Encode(curDir)), html.Ul(children=childArr)
+							])
+		else:
+			return html.Li(className=liClassName, children=[
+							html.A(dirName, href=Encode(curDir))
+							])
+'''
 # create app layout
 app.layout =  html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-contents', children=ServeLayout(''))])
+	dcc.Location(id='url', refresh=False),
+	html.Div(id='page-contents', children=ServeLayout(''))])
 
 # This function is called every time a folder name or a file name is clicked.
 @app.callback(dash.dependencies.Output('page-contents', 'children'),
-                [dash.dependencies.Input('url', 'pathname')])
-def ProcessUrl(selected_path):
+				[dash.dependencies.Input('url', 'pathname')])
+def ProcessUrl(curPath):
 
-        _main_logger.debug(f'got pathname: {selected_path}')
+		_main_logger.debug(f'got pathname in process url: {curPath}')
 
-        #if (selected_path is None):
-        #    _main_logger.debug('Serving root path')
-        #    return ServeLayout('')
+		#if (selected_path is None):
+		#	_main_logger.debug('Serving root path')
+		#	return ServeLayout('')
 
-        try:
-            path = Decode(selected_path).lstrip('/')
-        except:
-            return None
+		try:
+			path = Decode(curPath).lstrip('/')
+		except:
+			return html.Div('Error decoding the path from the URL.')
 
-        if (path=='') or (path=='/'):
-            _main_logger.debug('Serving root path')
-            return ServeLayout('')
-        else:
-            _main_logger.debug(f'Serving: {path}')
-            return ServeLayout(path)
+		if (path=='') or (path==os.path.sep):
+			_main_logger.debug('Serving root path')
+			return ServeLayout('')
+		else:
+			_main_logger.debug(f'Serving: {path}')
+			return ServeLayout(path)
