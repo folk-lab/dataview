@@ -27,7 +27,7 @@ def ServeLayout(curPath):
 	
 	curDirName = fs.GetDirName(curPath)
 	subfolderList = MakeSubDirList(curPath)
-	subfolderListObj = html.Ul(id='tree-root-ul', className='tree-root', children=subfolderList)
+	subfolderListObj = html.Ul(id='dir-root-ul', className='dir-root', children=subfolderList)
 
 	# List all the files in the selected folder.
 	filesArray = fs.ListFiles(curPath)
@@ -35,10 +35,8 @@ def ServeLayout(curPath):
 	for fn in filesArray:
 		filePath = os.path.join(curDirName, fn)
 		if filePath == curPath:
-			#fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath)), className='selected'))
 			fileListHtml.append(html.Li(dcc.Link(fn, href=Encode(filePath)), className='selected'))
 		else:
-			# fileListHtml.append(html.Li(html.A(fn, href=Encode(filePath))))
 			fileListHtml.append(html.Li(dcc.Link(fn, href=Encode(filePath))))
 	fileListHtml = html.Ul(id='file-list', className='file-list', children=fileListHtml)
 
@@ -49,17 +47,24 @@ def ServeLayout(curPath):
 		gd = [html.Div(id='plot-area', children=html.P('Select a dataset...')), ]
 
 	return [html.Div(id='row-container',
-			children=[html.Div(id='tree-div', children=subfolderListObj),
+			children=[
+					html.Div(id='dir-list-div', children=subfolderListObj),
 					html.Div(id='file-list-div', children=[fileListHtml]),
 					html.Div(id='graph-div', children=gd)])]
 
 
 
 # List all subfolders (insteda of making a tree), and add an UP button.
-def MakeSubDirList(curDir):
+def MakeSubDirList(d):
 	fs = fsys.FileSystem()
+	
 	childArr = []
-	lst = fs.ListSubDirs(curDir)
+	dirName = fs.GetDirName(d)
+	parentDir = fs.GetParentDir(d)
+	if d != '' and dirName != '':
+		childArr.append(html.Li(className='up', children=dcc.Link('..', parentDir)))
+	
+	lst = fs.ListSubDirs(d)
 	_main_logger.debug(f'MakeSubDirList: {lst}')
 	for subDir in lst:
 		_main_logger.debug(f'subfolder: {subDir}')

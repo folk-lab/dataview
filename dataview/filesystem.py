@@ -13,6 +13,12 @@ class FileSystem:
 		else:
 			return d
 			
+	def GetParentDir(self, d):
+		if os.path.isfile(os.path.join(self.root, d)):
+			return os.path.normpath(os.path.join(os.path.dirname(d), os.pardir))
+		else:
+			return os.path.normpath(os.path.join(d, os.pardir))
+			
 	def ListSubDirs(self, d):
 		result = []
 		if os.path.isfile(os.path.join(self.root, d)):
@@ -30,7 +36,7 @@ class FileSystem:
 
 	def ListFiles(self, d):
 		result = []
-		displayed_types = ['.h5', '.hdf5', '.ibw', '.png', '.jpg', '.jpeg']
+		displayed_types = config['DisplayableTypes']
 		if os.path.isfile(os.path.join(self.root, d)):
 			d = os.path.dirname(d)
 		
