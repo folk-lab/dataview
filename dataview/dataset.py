@@ -6,7 +6,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
-import h5py
+import h5py, json
 from dataview import app
 
 dropdown_callback_items = []
@@ -88,8 +88,11 @@ def check_data_shapes(x, y, z=None):
 	dash.dependencies.Input('data-dropdown', 'value')])
 def update_plot(fname, xname, yname, dname):
 	_ds_logger.debug(f'updating plot: {fname} {xname} {yname} {dname}')
-	with h5py.File(fname, 'r') as f: # load file object
+	xtitle = ''
+	ytitle = ''
 
+	with h5py.File(fname, 'r') as f: # load file object
+		js = json.loads(f['/metadata'].attrs['sweep_logs'])
 		# load x and y data
 		if xname!='-':
 			x = f[xname][:]
@@ -102,10 +105,19 @@ def update_plot(fname, xname, yname, dname):
 		_ds_logger.debug('Data dimensions: {0} shape: {1}'.format(d.ndim, d.shape))
 		if d.ndim == 1:
 			# Fucking one dimensional!
-			return _plot1d(x, d)
+			try:
+				xtitle = js['axis_labels']['x']
+			except:
+				pass
+			return _plot1d(x, d, xtitle=xtitle)
 		if d.ndim == 2:
 			# Respectfully two dimensional!
-			return _plotsd(x, y, d)
+			try:
+				xtitle=js['axis_labels']['x']
+				ytitle=js['axis_labels']['y']
+			except:
+				pass
+			return _plot2d(x, y, d, xtitle=xtitle, ytitle=ytitle)
 		
 			# # check if these arrays are 1d
 			# if (x.ndim==1 or x.shape[0]==1) and (y.ndim==1 or y.shape[0]==1):
@@ -129,7 +141,7 @@ def update_plot(fname, xname, yname, dname):
 			# else:
 				# return _plot2d(x,y,z)
 
-def _plot1d(x, d):
+def _plot1d(x, d, xtitle=''):
 	if not check_data_shapes(x, d):
 		return html.P('ShapeError: x and y array shapes not consistent')
 	
@@ -138,7 +150,7 @@ def _plot1d(x, d):
 		figure={
 			'data': [data],
 			'layout': go.Layout(
-				# xaxis={'type': 'log', 'title': 'GDP Per Capita'},
+				xaxis={'title': xtitle},
 				# yaxis={'title': 'Life Expectancy'},
 				# margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
 				# legend={'x': 0, 'y': 1},
@@ -149,7 +161,7 @@ def _plot1d(x, d):
 
 	return graph_elem		
 
-def _plot2d(x, y, d):
+def _plot2d(x, y, d, xtitle='', ytitle=''):
 	if not check_data_shapes(x, y, z=d):
 		return html.P('ShapeError: x, y, and z array shapes not consistent')
 		
@@ -163,8 +175,8 @@ def _plot2d(x, y, d):
 		figure={
 			'data': [data],
 			'layout': go.Layout(
-				# xaxis={'type': 'log', 'title': 'GDP Per Capita'},
-				# yaxis={'title': 'Life Expectancy'},
+				xaxis={'title': xtitle},
+				yaxis={'title': ytitle},
 				# margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
 				# legend={'x': 0, 'y': 1},
 				hovermode='closest'
@@ -172,3 +184,19 @@ def _plot2d(x, y, d):
 		}
 	)
 	return graph_elem
+
+def get_comments(file_path):
+	res = []
+	with h5py.File(file_path, 'r') as f: # load file object
+		try:
+			for key, val in dict(f['/metadata'].attrs).items():
+				js = json.loads(f['/metadata'].attrs[key])
+				for k in js:
+					if type(js[k]) == str:
+						res.append(html.Tr(children=[html.Td(k), html.Td(js[k])]))
+					elif type(js[k]) == dict:
+						res.append(html.Tr(children=[html.Td(k), html.Td(json.dumps(js[k]))]))
+		except:
+			pass
+		
+	return res

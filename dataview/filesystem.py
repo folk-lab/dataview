@@ -24,7 +24,6 @@ class FileSystem:
 		if os.path.isfile(os.path.join(self.root, d)):
 			d = os.path.dirname(d)
 		lst = os.listdir(os.path.join(self.root, d))
-		_fs_logger.debug(f'ListSubDirs {lst}')
 		for item in lst:
 			item_path = os.path.join(self.root, d, item)
 			if os.path.isdir(item_path) \

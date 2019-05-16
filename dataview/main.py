@@ -22,7 +22,6 @@ def Decode(n):
 def ServeLayout(curPath):
 	fs = fsys.FileSystem()
 	fullCurPath = fs.FullPath(curPath)
-	_main_logger.debug(f'ServeLayout {curPath}')
 	# List subfolders in the left column
 	
 	curDirName = fs.GetDirName(curPath)
@@ -42,9 +41,10 @@ def ServeLayout(curPath):
 
 	if fs.IsPlottable(curPath):
 		gd = [ds.get_dataset_menus(fullCurPath),
-				html.Div(id='plot-area', children=html.P('Select arrays...'))]
+				html.Div(id='plot-area', children=html.P('Select arrays...')),
+				html.Table(className='comments', children=ds.get_comments(fullCurPath))]
 	else:
-		gd = [html.Div(id='plot-area', children=html.P('Select a dataset...')), ]
+		gd = [html.Div(id='plot-area', children=html.P('Select a dataset...'))]
 
 	return [html.Div(id='row-container',
 			children=[
@@ -65,54 +65,13 @@ def MakeSubDirList(d):
 		childArr.append(html.Li(className='up', children=dcc.Link('..', parentDir)))
 	
 	lst = fs.ListSubDirs(d)
-	_main_logger.debug(f'MakeSubDirList: {lst}')
 	for subDir in lst:
-		_main_logger.debug(f'subfolder: {subDir}')
 		dirName = os.path.basename(subDir)
 		#childArr.append(html.Li(children=[html.A(dirName, href=Encode(subDir))]))
 		childArr.append(html.Li(children=[dcc.Link(dirName, href=Encode(subDir))]))
 	return childArr
 	
-'''
-# A recusive function that generates a tree structure
-# using <ul> and <li> HTML elements.
-def MakeDirTree(curDir, selectedDir):
-		if selectedDir == '' or selectedDir == os.path.sep:
-				selectedDir = ''
-		selected = False
-		isOpen = False
-		if selectedDir == curDir[:-1]:
-			selected = True
-		if selectedDir.startswith(curDir[:-1]):
-			isOpen = True
-		fs = fsys.FileSystem()
-		dirName = os.path.basename(curDir[:-1])
-
-		childArr = []
-		for subDir in fs.ListSubDirs(curDir):
-			childArr.append(MakeDirTree(os.path.join(curDir, subDir), selectedDir))
-
-		if curDir == '':
-			dirName = os.path.basename(fs.root)
-
-		liClassName = ''
-		if selected:
-			liClassName += 'selected '
-		if isOpen:
-			liClassName += 'open '
-
-		if curDir == '':
-			curDir = os.path.sep
-
-		if len(childArr) > 0:
-			return html.Li(className=liClassName, children=[
-							html.A(dirName, href=Encode(curDir)), html.Ul(children=childArr)
-							])
-		else:
-			return html.Li(className=liClassName, children=[
-							html.A(dirName, href=Encode(curDir))
-							])
-'''
+	
 # create app layout
 app.layout =  html.Div([
 	dcc.Location(id='url', refresh=False),
@@ -122,21 +81,12 @@ app.layout =  html.Div([
 @app.callback(dash.dependencies.Output('page-contents', 'children'),
 				[dash.dependencies.Input('url', 'pathname')])
 def ProcessUrl(curPath):
+	try:
+		path = Decode(curPath).lstrip('/')
+	except:
+		return html.Div('Error decoding the path from the URL.')
 
-		_main_logger.debug(f'got pathname in process url: {curPath}')
-
-		#if (selected_path is None):
-		#	_main_logger.debug('Serving root path')
-		#	return ServeLayout('')
-
-		try:
-			path = Decode(curPath).lstrip('/')
-		except:
-			return html.Div('Error decoding the path from the URL.')
-
-		if (path=='') or (path==os.path.sep):
-			_main_logger.debug('Serving root path')
-			return ServeLayout('')
-		else:
-			_main_logger.debug(f'Serving: {path}')
-			return ServeLayout(path)
+	if (path=='') or (path==os.path.sep):
+		return ServeLayout('')
+	else:
+		return ServeLayout(path)
