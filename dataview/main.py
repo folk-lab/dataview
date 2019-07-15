@@ -42,7 +42,7 @@ def ServeLayout(curPath):
 	if fs.IsPlottable(curPath):
 		gd = [ds.get_dataset_menus(fullCurPath),
 				html.Div(id='plot-area', children=html.P('Select arrays...')),
-				html.Table(className='comments', children=ds.get_comments(fullCurPath))]
+				html.Div(className='comments', children=ds.get_comments(fullCurPath))]
 	else:
 		gd = [html.Div(id='plot-area', children=html.P('Select a dataset...'))]
 

@@ -100,7 +100,6 @@ def update_plot(fname, xname, yname, dname):
 		if yname!='-':
 			y = f[yname][:]
 			_ds_logger.debug('y.ndim={0} shape={1}'.format(y.ndim, y.shape))
-
 		d = f[dname][:]
 		_ds_logger.debug('Data dimensions: {0} shape: {1}'.format(d.ndim, d.shape))
 		if d.ndim == 1:
@@ -188,15 +187,12 @@ def _plot2d(x, y, d, xtitle='', ytitle=''):
 def get_comments(file_path):
 	res = []
 	with h5py.File(file_path, 'r') as f: # load file object
+		#print(dict(f['/metadata'].attrs).items())
 		try:
 			for key, val in dict(f['/metadata'].attrs).items():
-				js = json.loads(f['/metadata'].attrs[key])
-				for k in js:
-					if type(js[k]) == str:
-						res.append(html.Tr(children=[html.Td(k), html.Td(js[k])]))
-					elif type(js[k]) == dict:
-						res.append(html.Tr(children=[html.Td(k), html.Td(json.dumps(js[k]))]))
-		except:
-			pass
-		
+				res.append(html.H2(key))
+				js = json.loads(val)
+				res.append(html.Pre(json.dumps(js, indent=4).replace('\\"', '').replace('"', '')))
+		except Exception as x:
+			print(x)
 	return res
