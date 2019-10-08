@@ -38,11 +38,16 @@ def ServeLayout(curPath):
 		else:
 			fileListHtml.append(html.Li(dcc.Link(fn, href=Encode(filePath))))
 	fileListHtml = html.Ul(id='file-list', className='file-list', children=fileListHtml)
-
+	
+	gd = ""
+	
 	if fs.IsPlottable(curPath):
-		gd = [ds.get_dataset_menus(fullCurPath),
-				html.Div(id='plot-area', children=html.P('Select arrays...')),
-				html.Div(className='comments', children=ds.get_comments(fullCurPath))]
+		_, item_type = os.path.splitext(curPath)
+		
+		print("Item Type:", item_type)
+		if item_type == ".h5" or item_type == ".hdf5":
+			gd = display_h5(fullCurPath)
+
 	else:
 		gd = [html.Div(id='plot-area', children=html.P('Select a dataset...'))]
 
@@ -52,7 +57,12 @@ def ServeLayout(curPath):
 					html.Div(id='file-list-div', children=[fileListHtml]),
 					html.Div(id='graph-div', children=gd)])]
 
-
+def display_h5(fullCurPath):
+	gd = [ds.get_dataset_menus(fullCurPath),
+		html.Div(id='plot-area', children=html.P('Select arrays...')),
+		html.Div(className='comments', children=ds.get_comments(fullCurPath))]
+	return gd
+	
 
 # List all subfolders (insteda of making a tree), and add an UP button.
 def MakeSubDirList(d):
