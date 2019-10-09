@@ -8,6 +8,7 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import h5py, json, datetime
 from dataview import app
+from error import RecordError
 
 dropdown_callback_items = []
 
@@ -96,6 +97,7 @@ def update_plot(fname, xname, yname, dname):
 			js = json.loads(f['/metadata'].attrs['sweep_logs'])
 		except:
 			js = []
+			RecordError(f"metadata is empty. Filename = {filename}")
 
 		d = f[dname][:]
 		# load x and y data
@@ -112,7 +114,7 @@ def update_plot(fname, xname, yname, dname):
 			try:
 				xtitle = json.loads(js['axis_labels'])['x']
 			except:
-				pass
+				RecordError(f"axis_labels -> x does not exist in metadata. Filename = {filename}")
 			return _plot1d(x, d, xtitle=xtitle)
 		if d.ndim == 2:
 			# Respectfully two dimensional!
