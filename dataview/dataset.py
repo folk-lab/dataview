@@ -102,19 +102,18 @@ def update_plot(fname, xname, yname, dname):
 		# load x and y data
 		if xname!='-':
 			x = f[xname][:]
-			_ds_logger.debug('x.ndim={0} shape={1}'.format(x.ndim, x.shape))
 		if yname!='-':
 			y = f[yname][:]
-			_ds_logger.debug('y.ndim={0} shape={1}'.format(y.ndim, y.shape))
 		
-		_ds_logger.debug('Data dimensions: {0} shape: {1}'.format(d.ndim, d.shape))
+		
 		if d.ndim == 1:
 			# Fucking one dimensional!
 			try:
 				xtitle = json.loads(js['axis_labels'])['x']
 			except:
 				_ds_logger.debug(f"axis_labels -> x does not exist in metadata. Filename = {filename}")
-				
+			_ds_logger.debug(f"XTITLE={xtitle}")
+			
 			return _plot1d(x, d, xtitle=xtitle)
 			
 		if d.ndim == 2:
