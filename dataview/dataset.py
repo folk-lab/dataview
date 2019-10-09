@@ -110,15 +110,15 @@ def update_plot(fname, xname, yname, dname):
 		if d.ndim == 1:
 			# Fucking one dimensional!
 			try:
-				xtitle = js['axis_labels']['x']
+				xtitle = json.loads(js['axis_labels'])['x']
 			except:
 				pass
 			return _plot1d(x, d, xtitle=xtitle)
 		if d.ndim == 2:
 			# Respectfully two dimensional!
 			try:
-				xtitle=js['axis_labels']['x']
-				ytitle=js['axis_labels']['y']
+				xtitle=json.loads(js['axis_labels'])['x']
+				ytitle=json.loads(js['axis_labels'])['y']
 			except:
 				pass
 			return _plot2d(x, y, d, xtitle=xtitle, ytitle=ytitle)
@@ -150,6 +150,7 @@ def _plot1d(x, d, xtitle='', ytitle=''):
 		return html.P('ShapeError: x and y array shapes not consistent')
 
 	# If the x-axis is time, it needs special treatments.
+	print("xtitle", xtitle)
 	if xtitle[:4].lower()=='time':
 		timediff = x[-1] - x[0]
 		
