@@ -152,7 +152,7 @@ def _plot1d(x, d, xtitle='', ytitle=''):
 		return html.P('ShapeError: x and y array shapes not consistent')
 
 	# If the x-axis is time, it needs special treatments.
-	print("xtitle", xtitle)
+	_ds_logger.debug("xtitle" + xtitle)
 	if xtitle[:4].lower()=='time':
 		timediff = x[-1] - x[0]
 		
