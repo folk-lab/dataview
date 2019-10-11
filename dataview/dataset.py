@@ -90,7 +90,7 @@ def update_plot(fname, xname, yname, dname):
 	_ds_logger.debug(f'updating plot: {fname} {xname} {yname} {dname}')
 	xtitle = ''
 	ytitle = ''
-
+	
 	with h5py.File(fname, 'r') as f: # load file object
 		try:
 			js = json.loads(f['/metadata'].attrs['sweep_logs'])
@@ -104,16 +104,14 @@ def update_plot(fname, xname, yname, dname):
 			x = f[xname][:]
 		if yname!='-':
 			y = f[yname][:]
-		
-		
+
 		if d.ndim == 1:
 			# Fucking one dimensional!
 			try:
 				xtitle = json.loads(js['axis_labels'])['x']
 			except:
 				_ds_logger.debug(f"axis_labels -> x does not exist in metadata. Filename = {filename}")
-			_ds_logger.debug(f"XTITLE={xtitle}")
-			
+
 			return _plot1d(x, d, xtitle=xtitle)
 			
 		if d.ndim == 2:
@@ -152,7 +150,6 @@ def _plot1d(x, d, xtitle='', ytitle=''):
 		return html.P('ShapeError: x and y array shapes not consistent')
 
 	# If the x-axis is time, it needs special treatments.
-	_ds_logger.debug("xtitle" + xtitle)
 	if xtitle[:4].lower()=='time':
 		timediff = x[-1] - x[0]
 		
