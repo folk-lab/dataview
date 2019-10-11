@@ -1,9 +1,10 @@
 #row-container:after {content: ""; display: table; clear: both;}
-#dir-list-div, #file-list-div {float: left; width: 19%; height: 95vh; padding: 5px;}
+#dir-list-div, #file-list-div {float: left; width: 20%; height: 100vh;}
 
-#graph-div {float: left; width: 58%; height: 95vh; margin-top: 20px; margin-left: 10px;}
+#graph-div {float: left; width: 58%; height: 97vh; padding: 10px; overflow-y: scroll;}
 
 html { font-family: "Courier New", Courier, monospace }
+body {margin: 0px; padding: 0px;}
 ol, ul { padding: 10px; list-style:none; }
 li {padding: 10px; overflow:hidden;}
 
@@ -25,6 +26,6 @@ ul.file-list li {background: url('plot.png') no-repeat 7px 5px;}
 ul.file-list li.selected {background: url('openplot.png') no-repeat 7px 5px;}
 ul.file-list li.selected > a {font-size: Large; font-weight: bold;}
 
-div.data-dropdown-div {width: 19%; margin-left: 0; margin-right: 0.5%; display: inline-block;}
+div.data-dropdown-div {width: 19%; margin-left: 0px; margin-right: 0.5%; display: inline-block;}
 
 div.comments td {padding-left: 25px;}
