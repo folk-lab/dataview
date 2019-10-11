@@ -13,23 +13,45 @@ To run the app with the test server...
 python run.py
 ```
 
-I used nginx webserver to run the Dash application. Installation guides for nginx that runs a Dash application can be found [here](https://kifarunix.com/installing-linux-dash-with-nginx-on-ubuntu-18-04-lts/).
+I followed [this guide](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04)
+to set up the application on an NGINX web server.
 
-The following is the content of /etc/nginx/sites-available/testdash
 ```
+$ cat /etc/nginx/sites-available/dataview
 server {
-        server_name     phys-dots-15.physik.unibas.ch;
-        listen          8082 ssl;
-        ssl_certificate /etc/ssl/certs/phys-dots-15.crt;
-        ssl_certificate_key /etc/ssl/private/phys-dots-15.key;
-
-        access_log      /var/log/nginx/testdash.log;
-        error_log       /var/log/nginx/testdash.log;
-
+        listen 8082;
+        server_name server.physik.unibas.ch;
+        ssl on;
+        ssl_certificate /path/to/cert.crt;
+        ssl_certificate_key /path/to/privatekey.key;
         location / {
-                proxy_pass              http://127.0.0.1:8882;
-                proxy_set_header        Host $host;
-                proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+                include proxy_params;
+                proxy_pass http://unix:/srv/dataview/dataview.sock;
         }
 }
+```
+You need a symbolic link to that file in sites-enabled
+```
+sudo ln -s /etc/nginx/sites-available/dataview /etc/nginx/sites-enabled
+```
+And this is the systemd service file:
+
+```
+$ cat /etc/systemd/system/dataview_gunicorn.service
+[Unit]
+Description = Gunicorn instance to serve Dataview.
+
+[Service]
+ExecStart = /usr/local/bin/gunicorn --workers 4 --worker-class gevent --bind unix:dataview.sock -m 007 --chdir=/srv/dataview run:app.server
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target
+```
+The source files for me are in /srv/dataview
+You can get the source files by running
+```
+cd /srv/dataview
+git clone https://github.com/folk-lab/dataview.git
 ```
