@@ -96,7 +96,7 @@ def update_plot(fname, xname, yname, dname):
 			js = json.loads(f['/metadata'].attrs['sweep_logs'])
 		except:
 			js = []
-			_ds_logger.debug(f"metadata is empty. Filename = {filename}")
+			_ds_logger.debug(f"metadata is empty. Filename = {fname}")
 
 		d = f[dname][:]
 		# load x and y data
@@ -110,7 +110,7 @@ def update_plot(fname, xname, yname, dname):
 			try:
 				xtitle = json.loads(js['axis_labels'])['x']
 			except:
-				_ds_logger.debug(f"axis_labels -> x does not exist in metadata. Filename = {filename}")
+				_ds_logger.debug(f"axis_labels -> x does not exist in metadata. Filename = {fname}")
 
 			return _plot1d(x, d, xtitle=xtitle)
 			
