@@ -28,4 +28,5 @@ ul.file-list li.selected > a {font-size: Large; font-weight: bold;}
 
 div.data-dropdown-div {width: 19%; margin-left: 0px; margin-right: 0.5%; display: inline-block;}
 
+#display-file-path {padding: 5px;}
 div.comments td {padding-left: 25px;}

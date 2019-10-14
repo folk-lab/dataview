@@ -60,6 +60,7 @@ def ServeLayout(curPath):
 def display_h5(fullCurPath):
 	gd = [ds.get_dataset_menus(fullCurPath),
 		html.Div(id='plot-area', children=html.P('Select arrays...')),
+		html.Div(id='display-file-path', children="File name: " + fullCurPath[len(config['LocalRootDirectory']):]),
 		html.Div(className='comments', children=ds.get_comments(fullCurPath))]
 	return gd
 	

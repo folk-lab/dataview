@@ -57,7 +57,7 @@ def get_dataset_menus(file_path):
 				displaynames.append(n)
 
 		return html.Div(
-				[html.Div(id='file-path', children=file_path),  # , style={'display': 'none'}
+				[html.Div(id='file-path', children=file_path, style={'display': 'none'}),
 				html.Div(id='x-data', children=xdefault, style={'display': 'none'}),
 				html.Div(id='y-data', children=ydefault, style={'display': 'none'}),
 				html.Div([
@@ -121,29 +121,7 @@ def update_plot(fname, xname, yname, dname):
 				ytitle=json.loads(js['axis_labels'])['y']
 			except:
 				pass
-			return _plot2d(x, y, d, xtitle=xtitle, ytitle=ytitle)
-		
-			# # check if these arrays are 1d
-			# if (x.ndim==1 or x.shape[0]==1) and (y.ndim==1 or y.shape[0]==1):
-				# x = np.ravel(x)
-				# y = np.ravel(y)
-			# else:
-				# return html.P('ShapeError: x and y should be 1d arrays')
-		# else:
-			# return html.P('MissingDataError: Need both x and y arrays')
-
-		# # load z data
-		# if zname=='-':
-			# z = None
-			# return _plot1d(x, y)
-		# else:
-			# z = f[zname][:]
-			# if (z.ndim==1 or z.shape[0]==1):
-				# return _plot1d(x, y, np.ravel(z))
-			# elif z.shape[1]==0:
-				# return _plot1d(y, np.ravel(z))
-			# else:
-				# return _plot2d(x,y,z)
+			return _plot2d(x, y, d, xtitle=xtitle, ytitle=ytitle)		
 
 def _plot1d(x, d, xtitle='', ytitle=''):
 	if not check_data_shapes(x, d):
