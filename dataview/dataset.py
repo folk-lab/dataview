@@ -8,6 +8,7 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import h5py, json, datetime
 from dataview import app
+epochcorrection = 2082844800 # This is the number of seconds between 1.1.1904 (Macintosh/Igor time) and 1.1.1970 (UNIX epoch time)
 
 dropdown_callback_items = []
 
@@ -138,7 +139,6 @@ def _plot1d(x, d, xtitle='', ytitle=''):
 		elif timediff < 3600*24*60:
 			tf = '%d/%m %H:%M'
 		
-		epochcorrection = 2082844800 # This is the number of seconds between 1.1.1904 (Macintosh/Igor time) and 1.1.1970 (UNIX epoch time)
 		x = (x - epochcorrection)*1000  # plotly expects epoch time in milliseconds.
 		layout = go.Layout(xaxis={ 'title':xtitle, 'type': 'date', 'tickformat': tf}, yaxis={ 'title':ytitle})
 	else:
@@ -146,19 +146,26 @@ def _plot1d(x, d, xtitle='', ytitle=''):
 		#layout = go.Layout(xaxis={})
 
 	data = go.Scatter( x = x, y = d, mode = 'lines')
-		
-	graph_elem = dcc.Graph(
-		figure={
-			'data': [data],
-			'layout': layout
-		}
-	)
-
+	graph_elem = dcc.Graph(figure={'data': [data], 'layout': layout})
 	return graph_elem		
 
 def _plot2d(x, y, d, xtitle='', ytitle=''):
 	if not check_data_shapes(x, y, z=d):
 		return html.P('ShapeError: x, y, and z array shapes not consistent')
+
+	if xtitle[:4].lower()=='time':
+		timediff = x[-1] - x[0]
+		if timediff < 600:
+			tf = '%H:%M:%S'
+		elif timediff < 3600*24:
+			tf = '%H:%M'
+		elif timediff < 3600*24*60:
+			tf = '%d/%m %H:%M'
+
+		x = (x - epochcorrection)*1000  # plotly expects epoch time in milliseconds.
+		layout = go.Layout(xaxis={'title':xtitle, 'type': 'date', 'tickformat': tf}, yaxis={'title':ytitle}, hovermode='closest')
+	else:
+		layout = go.Layout(xaxis={'title':xtitle}, yaxis={'title':ytitle}, hovermode='closest')
 
 	data = go.Heatmap(
 		x = x,
@@ -166,18 +173,7 @@ def _plot2d(x, y, d, xtitle='', ytitle=''):
 		z = d,
 		colorscale='Viridis',
 	)
-	graph_elem = dcc.Graph(
-		figure={
-			'data': [data],
-			'layout': go.Layout(
-				xaxis={'title': xtitle},
-				yaxis={'title': ytitle},
-				# margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-				# legend={'x': 0, 'y': 1},
-				hovermode='closest'
-			)
-		}
-	)
+	graph_elem = dcc.Graph(figure={'data': [data],	'layout': layout})
 	return graph_elem
 
 def get_comments(file_path):
@@ -192,3 +188,4 @@ def get_comments(file_path):
 			_ds_logger.debug(f"Probably comments could not be found. Exception: {x}")
 			pass
 	return res
+
